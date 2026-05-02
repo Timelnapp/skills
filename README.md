@@ -21,7 +21,7 @@
 </p>
 
 ```bash
-npx skills add goodrahstar/timeln-secondbrain-skill
+npx skills add timelnapp/skills
 ```
 
 > The skill lives in [`skills/timeln-secondbrain/`](skills/timeln-secondbrain/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
