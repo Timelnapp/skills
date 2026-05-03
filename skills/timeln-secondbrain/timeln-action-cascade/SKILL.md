@@ -1,6 +1,6 @@
 ---
 name: timeln-action-cascade
-description: "Take a window of recently-saved Timeln documents and run them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX) to produce a prioritized action plan. Output is a single HTML file styled as a vertical pipeline — each framework shows what came in, the decision rule, what passed forward, and what was dropped, with connector pills between stages showing volume of handoff. Use this skill whenever Rahul says 'cascade my last X days', 'prioritize my recent Timeln saves', 'what should I do with my last week/month of saves', 'turn my saves into actions', 'run the framework cascade on my saves', 'eisenhower my saves', or any variation involving filtering recent Timeln captures into a single ranked plan with a WIG and next actions. Always queries Timeln MCP for the source data, applies LLM judgment for RICE scoring and MECE clustering, and produces a downloadable file in /mnt/user-data/outputs/."
+description: "Take a window of recently-saved Timeln documents and run them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX) to produce a prioritized action plan. Output is a single HTML file styled as a vertical pipeline — each framework shows what came in, the decision rule, what passed forward, and what was dropped, with connector pills between stages showing volume of handoff. Use this skill whenever Rahul says 'cascade my last X days', saves from today, 'prioritize my recent Timeln saves', 'what should I do with my last week/month of saves', 'turn my saves into actions', 'run the framework cascade on my saves', 'eisenhower my saves', or any variation involving filtering recent Timeln captures into a single ranked plan with a WIG and next actions. Always uses Timeln MCP (`whoami`, `get_recent_docs` and/or `search_documents`, optional `get_document` / `query_knowledge` / `get_topic_entities`) for source data, applies LLM judgment for RICE scoring and MECE clustering, and writes the artifact to `/mnt/user-data/outputs/` when that path exists; otherwise to the workspace `outputs/` folder and reports the absolute path. If the user says non-personal vs personal, use the Timeln MCP server they indicate (`user-timeln` vs `user-timeln-personal`). If the server is missing, instructs the user to sign in at timeln.app and install MCP in Cursor settings."
 ---
 
 # Timeln action cascade
@@ -20,7 +20,7 @@ The output is a **vertical pipeline visualization** with 6 stages stacked top-to
 
 ## Outcome
 
-A single file (HTML by default, MD if requested) saved to `/mnt/user-data/outputs/cascade-{YYYYMMDD}-{days_back}d.html`. The file walks through:
+A single file (HTML by default, MD if requested). **Preferred path:** `/mnt/user-data/outputs/cascade-{YYYYMMDD}-{days_back}d.html`. **Fallback (local Cursor / macOS):** `{workspace}/outputs/cascade-{YYYYMMDD}-{days_back}d.html` when `/mnt/user-data/outputs` is missing or not writable — note the fallback in the HTML footer or chat once. The file walks through:
 
 1. **PARA** — sort 100% of saves into Projects / Areas / Resources / Archive
 2. **MECE** — collapse topic tags into 4 non-overlapping clusters
@@ -31,8 +31,19 @@ A single file (HTML by default, MD if requested) saved to `/mnt/user-data/output
 
 ## Required systems
 
-- **Timeln MCP** must be connected in the host environment (Cursor, Claude Desktop, Claude Code). It exposes tools to query Rahul's saved documents.
-- Tool names may evolve — discover them at runtime via `tool_search`. Do NOT hardcode tool names.
+- **Timeln MCP** must be connected in the host environment (Cursor, Claude Desktop, Claude Code). In Cursor the enabled server is usually named **timeln** (filesystem folder `user-timeln`); a **timeln-personal** / `user-timeln-personal` server may also exist with the same read tools. **Default:** use the server the user asked for; if they say **non-personal** / work / research411 corpus, call tools on **`user-timeln`**; if they say **personal**, use **`user-timeln-personal`**. If they do not specify, use whichever server is connected and state `{{ACCOUNT}}` from `whoami` so the user can confirm.
+- **Schema source of truth:** In Cursor, the MCP FileSystem exposes each server’s tool JSON (e.g. `user-timeln/tools/get_recent_docs.json`). Read that before calling if anything fails after a Timeln release. Paths are client-managed, not necessarily inside the git repo.
+
+### If Timeln MCP is missing or tools do not appear
+
+Stop and tell the user clearly:
+
+1. **Sign in to Timeln** at [https://timeln.app](https://timeln.app) (use the account that should back the library).
+2. **Install / enable the Timeln MCP server** in the client: Cursor → **Settings → MCP** → add the server using the config block or URL Timeln provides in-app (exact steps change — use Timeln’s in-product MCP / integrations page).
+3. **Complete auth** so the server runs as them (paste token or complete OAuth, per current Timeln docs — not hardcoded here).
+4. **Restart the agent / Cursor** after saving MCP config.
+
+Optional verification prompt after setup: *“Call `whoami` on Timeln MCP and confirm my email.”*
 
 ## When the user invokes this
 
@@ -41,47 +52,57 @@ Inputs to extract from the request:
 | Parameter | Default | Notes |
 |-----------|---------|-------|
 | `days_back` | 30 | E.g. "last 7 days" → 7, "last month" → 30, "last quarter" → 90 |
+| calendar day / "today" | — | Not a `get_recent_docs` window. Use **`search_documents`** (paginate), filter rows where `created_at` starts with that **UTC date** (e.g. `2026-05-03`) unless the user specifies a timezone. Filename can use `1d` or `{YYYYMMDD}-today`. |
 | `account_email` | none | If user mentions a specific email, filter; otherwise pull what the MCP returns |
 | `output_format` | `html` | Use `md` only if the user explicitly says markdown |
 
-If the user is ambiguous on the window, ask once: "How many days back should I pull?" — don't assume.
+If the user is ambiguous on the window, ask once: "How many days back should I pull?" — don't assume. Exception: explicit **"today"** / a given date → no need to ask `days_back`.
 
 ## Workflow
 
-### 1) Discover Timeln MCP tools
+### 1) Confirm Timeln MCP + identity
 
-Call `tool_search` with multiple queries — Timeln MCP tool names aren't fixed:
-- `timeln search documents`
-- `timeln recent saves`
-- `timeln list documents`
-- `memory knowledge graph search`
-- `second brain saves`
+**Tools must exist** on the Timeln MCP server (see table below). If none of these tools are invocable, use **“If Timeln MCP is missing”** above — do not fabricate saves.
 
-Look for tools whose names or descriptions match these capabilities:
-- **Search / query** — natural language query into the saved corpus
-- **List recent** — time-windowed listing of saves
-- **Get topics** — topic/tag aggregation
-- **Get document** — fetch a specific save
+| Tool | Purpose | Key arguments |
+|------|---------|-----------------|
+| `whoami` | Confirm token and get **email + plan** for `{{ACCOUNT}}` | _(none)_ |
+| `get_recent_docs` | Recent saves in a **fixed** window | `window`: **`"weekly"`** (last 7 days) or **`"monthly"`** (last 30 days) only |
+| `search_documents` | Paginated document list, newest first by default | `limit` (default 50), `offset` (default 0), `order_by` (default `"created_at"`), `ascending` (default `false`) |
+| `get_document` | Full single doc when an id is needed | `doc_id` (required), `include_preview` (default `true`) |
+| `query_knowledge` | NL question over graph + docs (optional supplement, not the primary list) | **`question`** *or* **`query`** — exactly one must be set |
+| `get_topic_entities` | Entities/sources for one topic keyword (optional MECE / gap context) | `topic` (required) |
 
-**Read the schema** of any tool you find before calling. Do NOT guess parameter names. The MCP may expose `query`, `q`, `search_text`, `text` — they're not interchangeable.
+**Not used for this skill:** `ingest_url`, `ingest_text` (writes, not cascade input).
 
-If multiple candidate tools exist, prefer the one that:
-- Returns at least `id`, `title`, `summary`, `topics`, `created_at` per document
-- Supports a date range filter or returns the date so you can filter client-side
-- Returns ≥ 100 results per call (or supports pagination)
+**Response shape (normalize both variants):**
 
-If no Timeln MCP tools are discoverable, stop and tell the user: *"I can't find Timeln MCP tools in this session. Make sure Timeln MCP is connected — Settings → API tokens → paste into MCP config → restart your agent."*
+1. **Wrapped:** `{ "result": "<string>" }` where `result` is JSON text or plain text. **`JSON.parse(result)`** when it parses; then read fields from the parsed object.
+2. **Direct (common in Cursor MCP):** no `result` key — the tool returns a **plain JSON object**. Examples observed:
+   - `whoami` → `{ "email", "user_id", "subscription_plan", "auth_source" }` (use **`email`** for `{{ACCOUNT}}`).
+   - `search_documents` → `{ "documents": [ ... ], "total_count", "has_more" }` (each doc: **`doc_id`**, `title`, `summary`, `topics`, `created_at`, etc.).
+
+**Rule:** If `result` exists, parse it; else treat the top-level tool response as the payload. Never assume a shape without checking the latest tool descriptor or the raw response.
+
+Call **`whoami` first**. If it errors or shows no authenticated user, stop: user must sign in to Timeln and fix MCP credentials, then retry.
+
+**If tools are renamed or args change** (rare): re-read the tool’s JSON descriptor from the MCP server folder (e.g. `user-timeln/tools/<tool>.json` in Cursor’s MCP filesystem) or the client’s built-in tool schema before calling.
 
 ### 2) Pull the corpus
 
-Call the discovered tool. Construct the query to get all saves within the window:
+Choose the path by `days_back`:
 
-- If the tool supports date range: pass `from = today - days_back`, `to = today`
-- If the tool only supports natural-language search: call with empty query or `*`, then filter by `created_at` client-side
-- If the tool requires pagination: loop until you've got everything in the window
-- If `account_email` is specified, filter
+1. **`days_back === 7`** — call `get_recent_docs` with `{ "window": "weekly" }`.
+2. **`days_back === 30`** — call `get_recent_docs` with `{ "window": "monthly" }` **or** use `search_documents` if you need more than the recent-doc payload exposes.
+3. **Any other `days_back` (e.g. 14, 90)** — `get_recent_docs` **cannot** express arbitrary ranges. Use **`search_documents`** in a loop: `offset += limit` after each page, **discard** rows with `created_at` before the cutoff, and **stop** when a page has no rows on or after the cutoff, or when a page returns fewer than `limit` items (end of library). Use a generous `limit` (e.g. 50–100) to reduce round-trips. Keep `order_by: "created_at"`, `ascending: false` so newest pages are scanned first.
 
-Required fields per save:
+4. **Single calendar day** (e.g. "today", "2026-05-03") — same as (3): paginate `search_documents`, keep only rows whose `created_at` date equals the target day (UTC unless user specifies otherwise). `get_recent_docs` is **not** sufficient for an exact single day.
+
+**Optional:** `query_knowledge` with a question like *“List document titles and ids I saved in the last N days about work priorities”* can augment themes — still ground PARA/MECE on **`get_recent_docs` / `search_documents`** data so counts stay auditable.
+
+**`account_email`:** The MCP session is usually **one Timeln user** (`whoami.email`). If the user asked for a specific email and it does not match `whoami`, say so and stop or proceed only with their confirmed account.
+
+Required fields per save (map from API fields if names differ):
 - `title`
 - `summary` (or first ~200 chars of content)
 - `topics` (array of tag strings)
@@ -121,6 +142,8 @@ Saves spanning two clusters go to the dominant tag. Cross-cluster saves are sign
 **Drop list at this stage:** topics that don't fit a cluster — usually noise (off-mission product saves, generic finance tweets, lyrics, skincare). Show explicitly as struck-through chips.
 
 **Output of stage 2:** 4 cluster names with their tags and counts. A drop list with concrete examples.
+
+**Consistency check:** Per-save cluster assignments (non-Archive corpus) should **sum to `{{PARA_PASS_COUNT}}`** (or to total saves if you run MECE on the full set including Archive — pick one convention and match connector pill numbers). Do not show cluster sizes that add up to more than the items entering MECE.
 
 ### 5) Stage 3 — RICE · score & rank
 
@@ -221,21 +244,23 @@ Read `references/html-template.html`. Substitute these placeholders with compute
 
 The template includes embedded CSS that adapts to light/dark mode via `@media (prefers-color-scheme)`. Do NOT modify the styling — only fill placeholders.
 
-Save to `/mnt/user-data/outputs/cascade-{YYYYMMDD}-{days_back}d.html`.
+**Save location:** Try `/mnt/user-data/outputs/cascade-{YYYYMMDD}-{days_back}d.html` first. If the directory cannot be created or write fails, save to **`{workspace}/outputs/cascade-{YYYYMMDD}-{days_back}d.html`** (or the repo’s existing `outputs/` folder) and record that path in the chat and optionally in the HTML footer meta.
 
 ### Markdown (alternative)
 
 If user requests `md`, use `references/md-template.md` instead. Same placeholders, simpler structure.
 
-Save to `/mnt/user-data/outputs/cascade-{YYYYMMDD}-{days_back}d.md`.
+Use the same primary / fallback directories as HTML for `cascade-{YYYYMMDD}-{days_back}d.md`.
 
 ## After saving
 
-Use `present_files` to surface the file. In the response, give a 3–5 line summary:
+**Surface the artifact:** If the client exposes a `present_files` (or equivalent) tool, use it. **Otherwise** (typical Cursor agent): paste the **absolute path** once and tell the user to open it from the explorer.
+
+In the response, give a 3–5 line summary:
 - Total saves processed
 - Top RICE bet (winner with score)
 - WIG one-liner
-- "Open the file for the full cascade"
+- Where the file was written (primary or fallback path)
 
 **Do NOT duplicate the entire file content in the chat response.** The file is the artifact. Keep the chat response under ~80 words.
 
@@ -245,11 +270,13 @@ Use `present_files` to surface the file. In the response, give a 3–5 line summ
 - If a stage has thin data (< 10 saves), still produce the output but flag the small sample explicitly: "Small sample — recalibrate next month."
 - If RICE scoring feels arbitrary because the corpus is too narrow, write that note in the output near the RICE table.
 - Do NOT invent commitments or deadlines. Q1 items are only "urgent" if the corpus or user input gives a real reason.
-- If Timeln MCP returns multiple `email` accounts in the corpus, ask which one to focus on, or run all and segment.
+- The MCP session is one Timeln account (`whoami`); there is no multi-account corpus in one session. If the user needs another account, they must switch MCP credentials / profile in Timeln and re-run.
 - Do NOT build a kanban board, flowchart, or interactive widget. The cascade pipeline file is the only deliverable.
 
 ## QA checklist before presenting the file
 
+- [ ] `whoami` succeeded and `{{ACCOUNT}}` matches the session (or mismatch was called out)
+- [ ] Corpus pulled via `get_recent_docs` and/or `search_documents` per window rules above — not invented
 - [ ] All 6 stages present, each with input / decision rule / pass-through / dropped sections
 - [ ] PARA counts sum to the total saves
 - [ ] MECE clusters cover all major topics (no top-frequency tag missing)
@@ -260,8 +287,8 @@ Use `present_files` to surface the file. In the response, give a 3–5 line summ
 - [ ] Lead measures are weekly/daily and controllable, not outcome metrics
 - [ ] Connector pills between stages show real volume numbers (e.g. "151 → 136")
 - [ ] Dropped items are visible at every stage (struck-through chips)
-- [ ] File saved to `/mnt/user-data/outputs/`
-- [ ] `present_files` called
+- [ ] File saved to `/mnt/user-data/outputs/` **or** workspace `outputs/` with path stated if fallback used
+- [ ] Artifact surfaced (`present_files` if available, else absolute path in chat)
 
 ## Optional enhancements (only if user asks)
 
