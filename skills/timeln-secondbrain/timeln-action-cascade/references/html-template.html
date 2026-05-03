@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timeln action cascade — {{WINDOW}}</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --surface: #ffffff;
+    --surface-alt: #f4f2eb;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.2);
+    --teal: #1D9E75; --teal-bg: rgba(29,158,117,0.08); --teal-text: #085041;
+    --amber: #BA7517; --amber-bg: rgba(186,117,23,0.08); --amber-text: #633806;
+    --purple: #7F77DD; --purple-bg: rgba(127,119,221,0.08); --purple-text: #3C3489;
+    --coral: #D85A30; --coral-bg: rgba(216,90,48,0.08); --coral-text: #993C1D;
+    --green: #639922; --green-bg: rgba(99,153,34,0.08);
+    --pink: #D4537E; --pink-bg: rgba(212,83,126,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --surface: #25241f;
+      --surface-alt: #2c2b25;
+      --text-primary: #f0eee5;
+      --text-secondary: #b4b2a9;
+      --text-tertiary: #888780;
+      --border: rgba(255,255,255,0.12);
+      --border-strong: rgba(255,255,255,0.2);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.55;
+    padding: 32px 24px;
+    max-width: 880px;
+    margin: 0 auto;
+    font-size: 14px;
+  }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  h2 { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+  .meta-row { display: flex; gap: 16px; padding: 12px 0; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); margin-bottom: 24px; }
+  .meta { font-size: 12px; }
+  .meta .lbl { color: var(--text-tertiary); margin-right: 6px; }
+  .meta .val { color: var(--text-primary); font-weight: 500; }
+  .stage { border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .stage.org { border-left: 3px solid var(--teal); }
+  .stage.pri { border-left: 3px solid var(--amber); }
+  .stage.exe { border-left: 3px solid var(--purple); }
+  .sh { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 0.5px solid var(--border); }
+  .stage.org .sh { background: var(--teal-bg); }
+  .stage.pri .sh { background: var(--amber-bg); }
+  .stage.exe .sh { background: var(--purple-bg); }
+  .sn { font-size: 14px; font-weight: 500; }
+  .stag { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+  .stage.org .stag { background: rgba(29,158,117,0.15); color: var(--teal-text); }
+  .stage.pri .stag { background: rgba(186,117,23,0.15); color: var(--amber-text); }
+  .stage.exe .stag { background: rgba(127,119,221,0.15); color: var(--purple-text); }
+  .sc { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+  .sec { padding: 12px 16px; border-bottom: 0.5px solid var(--border); }
+  .sec:last-child { border-bottom: none; }
+  .sec.bg-alt { background: var(--surface-alt); }
+  .sl { font-size: 11px; font-weight: 500; color: var(--text-tertiary); margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .rule { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 3px 9px; border-radius: 4px; line-height: 1.4; }
+  .cn { background: var(--surface-alt); color: var(--text-secondary); border: 0.5px solid var(--border); }
+  .cdrop { background: var(--surface-alt); color: var(--text-tertiary); border: 0.5px solid var(--border); opacity: 0.55; text-decoration: line-through; }
+  .cprod { background: var(--coral-bg); color: var(--coral); border: 0.5px solid rgba(216,90,48,0.25); }
+  .cdist { background: var(--teal-bg); color: var(--teal); border: 0.5px solid rgba(29,158,117,0.25); }
+  .ccont { background: var(--amber-bg); color: var(--amber); border: 0.5px solid rgba(186,117,23,0.25); }
+  .carch { background: var(--purple-bg); color: var(--purple); border: 0.5px solid rgba(127,119,221,0.25); }
+  .cbld { background: var(--green-bg); color: var(--green); border: 0.5px solid rgba(99,153,34,0.25); }
+  .conn { display: flex; flex-direction: column; align-items: center; padding: 8px 0; }
+  .cline { width: 1px; height: 14px; background: var(--border-strong); }
+  .ctxt { font-size: 12px; color: var(--text-tertiary); padding: 4px 12px; border: 0.5px solid var(--border); border-radius: 12px; background: var(--surface-alt); }
+  table.para-tbl { width: 100%; font-size: 13px; border-collapse: collapse; }
+  table.para-tbl td, table.para-tbl th { text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--border); }
+  table.para-tbl th { color: var(--text-tertiary); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.para-tbl td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .cluster { display: flex; align-items: baseline; gap: 10px; padding: 4px 0; flex-wrap: wrap; }
+  .cluster-tags { font-size: 12px; color: var(--text-secondary); flex: 1; min-width: 0; }
+  .rice-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 0.5px solid var(--border); }
+  .rice-row:last-child { border-bottom: none; }
+  .rrank { font-size: 13px; color: var(--text-tertiary); min-width: 16px; font-weight: 500; }
+  .rrank.top { color: var(--amber); }
+  .rname { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; }
+  .rfx { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .rbar { flex: 0 0 88px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .rbarfill { height: 100%; background: var(--amber); border-radius: 2px; }
+  .rnum { font-size: 13px; font-weight: 500; min-width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+  .rnum.top { color: var(--amber); }
+  .quad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quad { border-radius: 8px; padding: 10px 12px; }
+  .ql { font-size: 12px; font-weight: 500; margin-bottom: 8px; letter-spacing: 0.03em; }
+  .q1q { background: var(--coral-bg); } .q1q .ql { color: var(--coral); }
+  .q2q { background: var(--amber-bg); } .q2q .ql { color: var(--amber); }
+  .q3q { background: var(--purple-bg); opacity: 0.7; } .q3q .ql { color: var(--purple); }
+  .q4q { background: var(--surface-alt); opacity: 0.55; } .q4q .ql { color: var(--text-tertiary); }
+  .gtd-line { font-size: 13px; color: var(--text-primary); padding: 8px 0; border-bottom: 0.5px solid var(--border); display: flex; gap: 10px; align-items: flex-start; line-height: 1.5; }
+  .gtd-line:last-child { border-bottom: none; }
+  .gtdq { display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; min-width: 22px; text-align: center; }
+  .gq1 { background: var(--coral-bg); color: var(--coral); }
+  .gq2 { background: var(--amber-bg); color: var(--amber); }
+  .gnum { font-size: 11px; color: var(--text-tertiary); font-weight: 500; min-width: 16px; text-align: right; margin-top: 2px; flex-shrink: 0; }
+  .wig-box { border: 0.5px solid var(--purple); border-left: 3px solid var(--purple); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; }
+  .wig-l { font-size: 11px; font-weight: 500; color: var(--purple); margin-bottom: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .wig-t { font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .lead-row { display: flex; gap: 10px; padding: 4px 0; align-items: flex-start; }
+  .lead-l { font-size: 12px; font-weight: 500; color: var(--purple); white-space: nowrap; flex-shrink: 0; min-width: 50px; }
+  .lead-v { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .cadence { margin-top: 10px; font-size: 12px; color: var(--text-tertiary); font-style: italic; line-height: 1.55; padding-top: 8px; border-top: 0.5px solid var(--border); }
+  .footer { margin-top: 32px; padding-top: 16px; border-top: 0.5px solid var(--border); font-size: 11px; color: var(--text-tertiary); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<h1>Timeln action cascade</h1>
+<p class="subtitle">{{WINDOW}} · {{TOTAL_SAVES}} saves processed through 6 frameworks</p>
+
+<div class="meta-row">
+  <div class="meta"><span class="lbl">Generated</span><span class="val">{{GENERATED_AT}}</span></div>
+  <div class="meta"><span class="lbl">Source</span><span class="val">Timeln · Supabase</span></div>
+  <div class="meta"><span class="lbl">Account</span><span class="val">{{ACCOUNT}}</span></div>
+</div>
+
+<!-- STAGE 1: PARA -->
+<div class="stage org">
+  <div class="sh">
+    <span class="sn">PARA</span>
+    <span class="stag">Sort signal</span>
+    <span class="sc">{{TOTAL_SAVES}} saves in</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input</div>
+    <div class="chips">
+      <span class="chip cn">{{TOTAL_SAVES}} documents</span>
+      <span class="chip cn">{{ACCOUNT}}</span>
+      <span class="chip cn">titles + summaries + topics</span>
+      <span class="chip cn">{{WINDOW}}</span>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sl">Decision rule</div>
+    <div class="rule">Does this save have a ship date or customer-visible output? Project. Is it an ongoing theme or responsibility? Area. Will I reference or build from it within 30 days? Resource. Everything else — archive or drop.</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through</div>
+    <table class="para-tbl">
+      <thead><tr><th>Bucket</th><th class="num">Count</th><th>Treatment</th></tr></thead>
+      <tbody>{{PARA_TABLE_ROWS}}</tbody>
+    </table>
+    {{PARA_FLAGS}}
+  </div>
+</div>
+
+<div class="conn"><div class="cline"></div><div class="ctxt">{{PARA_PASS_COUNT}} meaningful saves pass forward</div><div class="cline"></div></div>
+
+<!-- STAGE 2: MECE -->
+<div class="stage org">
+  <div class="sh">
+    <span class="sn">MECE</span>
+    <span class="stag">Remove overlap</span>
+    <span class="sc">{{PARA_PASS_COUNT}} items in</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input — from PARA buckets</div>
+    <div class="chips">{{MECE_INPUT_CHIPS}}</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Decision rule</div>
+    <div class="rule">Group all saves by dominant topic tag into exactly 4 non-overlapping clusters. Each save belongs to one cluster only. Saves that span two clusters go to the dominant tag. Cross-cluster saves reveal execution gaps — where you read but haven't connected to shipping.</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through — 4 distinct clusters</div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      {{MECE_CLUSTERS}}
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+      <span class="sl" style="margin-bottom: 0;">Dropped</span>
+      {{MECE_DROPPED}}
+    </div>
+  </div>
+</div>
+
+<div class="conn"><div class="cline"></div><div class="ctxt">4 distinct clusters → crystallised into actionable bets</div><div class="cline"></div></div>
+
+<!-- STAGE 3: RICE -->
+<div class="stage pri">
+  <div class="sh">
+    <span class="sn">RICE</span>
+    <span class="stag">Score & rank</span>
+    <span class="sc">{{RICE_BET_COUNT}} bets scored</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input — one bet per cluster</div>
+    <div class="chips">{{RICE_INPUT_CHIPS}}</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Scoring formula — RICE = (R × I × C) ÷ E</div>
+    <div class="rule">R and I scored 1–10. Confidence = 0.3–1.0 (how sure this works). Effort = 1–10 (higher effort lowers score). Ranking matters more than absolute numbers.</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through — ranked</div>
+    {{RICE_ROWS}}
+  </div>
+</div>
+
+<div class="conn"><div class="cline"></div><div class="ctxt">ranked bets + commitments → placed into 4 quadrants</div><div class="cline"></div></div>
+
+<!-- STAGE 4: EISENHOWER -->
+<div class="stage pri">
+  <div class="sh">
+    <span class="sn">Eisenhower</span>
+    <span class="stag">Map urgency</span>
+    <span class="sc">{{EISEN_TOTAL}} items sorted</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input</div>
+    <div class="chips">
+      <span class="chip cn">{{RICE_BET_COUNT}} RICE-ranked bets</span>
+      <span class="chip cn">committed / calendar-locked items</span>
+      <span class="chip cn">floating saves from PARA areas</span>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sl">Decision rule</div>
+    <div class="rule">Urgent + Important → Q1 (calendar or reputation at risk this week). Important, not urgent → Q2 (schedule for deep work). Urgent, not important → Q3 (batch). Neither → Q4 (eliminate today).</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through</div>
+    <div class="quad-grid">
+      <div class="quad q1q"><div class="ql">Q1 · do now · {{Q1_COUNT}} items</div><div class="chips">{{Q1_ITEMS}}</div></div>
+      <div class="quad q2q"><div class="ql">Q2 · schedule · {{Q2_COUNT}} items</div><div class="chips">{{Q2_ITEMS}}</div></div>
+      <div class="quad q3q"><div class="ql">Q3 · batch · {{Q3_COUNT}} items</div><div class="chips">{{Q3_ITEMS}}</div></div>
+      <div class="quad q4q"><div class="ql">Q4 · drop · {{Q4_COUNT}} items</div><div class="chips">{{Q4_ITEMS}}</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="conn"><div class="cline"></div><div class="ctxt">Q1 + Q2 pass forward · Q3 + Q4 exit the system here</div><div class="cline"></div></div>
+
+<!-- STAGE 5: GTD -->
+<div class="stage exe">
+  <div class="sh">
+    <span class="sn">GTD</span>
+    <span class="stag">Next action</span>
+    <span class="sc">{{GTD_COUNT}} actions</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input — Q1 + Q2 from Eisenhower</div>
+    <div class="chips">{{GTD_INPUT_CHIPS}}</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Decision rule</div>
+    <div class="rule">For each item: what is the single next physical action? Format must be verb + object + where. If you can't write it that way, it's still a project — break it down until you can.</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through</div>
+    {{GTD_ACTIONS}}
+  </div>
+</div>
+
+<div class="conn"><div class="cline"></div><div class="ctxt">concrete next actions enter the accountability layer</div><div class="cline"></div></div>
+
+<!-- STAGE 6: 4DX -->
+<div class="stage exe">
+  <div class="sh">
+    <span class="sn">4DX</span>
+    <span class="stag">Stay accountable</span>
+    <span class="sc">{{GTD_COUNT}} actions → 1 WIG</span>
+  </div>
+  <div class="sec bg-alt">
+    <div class="sl">Input</div>
+    <div class="chips">
+      <span class="chip cn">{{GTD_COUNT}} next actions</span>
+      <span class="chip cn">bottleneck: {{BOTTLENECK}}</span>
+      <span class="chip cn">{{TARGET_WINDOW}}</span>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sl">Decision rule</div>
+    <div class="rule">Identify one WIG that moves the system bottleneck. Refuse to have two WIGs. Choose 2 lead measures that are predictive of the WIG and within direct daily control. Set a non-negotiable 15-min weekly scoreboard — the cadence is the system.</div>
+  </div>
+  <div class="sec">
+    <div class="sl">Pass through — WIG + measures + cadence</div>
+    <div class="wig-box">
+      <div class="wig-l">WIG — lag measure</div>
+      <div class="wig-t">{{WIG_TEXT}}</div>
+    </div>
+    <div class="lead-row"><span class="lead-l">Lead 1</span><span class="lead-v">{{LEAD_1}}</span></div>
+    <div class="lead-row"><span class="lead-l">Lead 2</span><span class="lead-v">{{LEAD_2}}</span></div>
+    <div class="cadence">{{CADENCE}}</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Generated from Timeln · {{GENERATED_AT}}</span>
+  <span>{{TOTAL_SAVES}} saves → {{GTD_COUNT}} actions → 1 WIG</span>
+</div>
+
+</body>
+</html>
