@@ -138,39 +138,6 @@ All tools forward the bearer token from the `Authorization` header.
 
 ---
 
-## Self-hosting the MCP (optional)
-
-Prefer to run the MCP in-process instead of calling the hosted one? It's a single Python file:
-
-```bash
-pip install -r mcp/requirements.txt
-```
-
-Then use this config instead:
-
-```json
-{
-  "mcpServers": {
-    "timeln": {
-      "command": "python",
-      "args": ["/absolute/path/to/skills/mcp/server.py"],
-      "env": { "TIMELN_API_TOKEN": "tln_YOUR_TOKEN_HERE" }
-    }
-  }
-}
-```
-
-See [`mcp/README.md`](mcp/README.md) for env vars and SSE transport details.
-
-### Self-hosting Timeln itself
-
-Pointing at a self-hosted Timeln backend? Override the base URL on either transport:
-
-- **Hosted MCP** → not applicable; use self-host option below.
-- **Local MCP** → set `TIMELN_API_BASE_URL=https://your-timeln.example.com` in the `env` block.
-
----
-
 ## Which skill for which moment?
 
 | Moment | Use this |
