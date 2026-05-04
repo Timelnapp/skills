@@ -2,10 +2,10 @@
   <img src="docs/ascii-banner.svg" alt="TIMELN SECOND BRAIN" width="760" />
 </p>
 
-<h1 align="center">Timeln Second Brain</h1>
+<h1 align="center">Timeln Skills</h1>
 
 <p align="center">
-  <em>A second brain for your AI, wired to your own knowledge graph.</em>
+  <em>6 hotkeys that ground your AI in your real memory — no hallucinations, just facts.</em>
 </p>
 
 <p align="center">
@@ -24,27 +24,31 @@
 npx skills add timelnapp/skills
 ```
 
-> The skill lives in [`skills/timeln-find/`](skills/timeln-find/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
+> All skills live in [`skills/`](skills/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
 
-**What you get:**
-- 🧠 Your AI answers grounded in **your** documents — no hallucinations.
-- 🗺️ MECE gap analysis + PARA framework, applied live to your real knowledge graph.
-- 📊 Just ask *"show my knowledge graph"* — the skill builds an interactive D3 visualization and opens it, no commands needed.
-
-See it live: **[timeln.app/download/skill](https://timeln.app/download/skill)** · Read the launch post: **[timeln.app/blog/timeln-second-brain-skill](https://timeln.app/blog/timeln-second-brain-skill)**
+**The 6 skills:**
+- **`timeln-find`** — Open-ended search + synthesis over your memory. Ask anything, get grounded answers.
+- **`timeln-plan`** — Turn N days of Timeln saves into one ranked action plan (PARA → MECE → RICE → Eisenhower → GTD → 4DX).
+- **`timeln-quickly`** — One-breath fact or quote, mid-call hotkey. No latency, no paraphrase.
+- **`timeln-shipped`** — Proof of past work (repos, docs, case studies) ready to paste mid-pitch.
+- **`timeln-decided`** — Pull past decisions + actual rationale. Stops you relitigating settled calls.
+- **`timeln-warned`** — Surface your past failures/retros. Anti-hallucination armor for recommendations.
 
 ---
 
 ## What is this?
 
-A Claude Code / Cursor skill that turns your Timeln library into a live second brain for your AI. Ask *"what should I learn today?"* or *"connect my ideas"* and get answers grounded in the documents and knowledge graph you've actually built — no hallucinations.
+Six Claude Code / Cursor skills that wire your agent to your real Timeln memory. Every skill:
+- **Grounds output in real data** — no training-data guesses, no fabrication. If memory doesn't have it, the skill says so.
+- **Built for moments that matter** — fast enough for mid-call recalls, citations built-in, output shaped for the moment (fact, quote, artifact link, ranked list).
+- **Anti-hallucination armor** — fills the gaps where Claude alone is forced to invent. Decisions, failures, proof points, all from *your* actual history.
 
-It works by:
-- **`SKILL.md`** — the reasoning recipe (MECE gap analysis + PARA + D3 viz).
-- **Hosted Timeln MCP** — a Model Context Protocol server that bridges your agent to the Timeln REST API. No Python, no local daemon.
-- **Your Timeln account** — where the real data lives.
+How it works:
+- **Hosted Timeln MCP** — a single Model Context Protocol server bridges your agent to the Timeln REST API. No Python, no local daemon.
+- **Your Timeln account** — where the real data lives (documents, knowledge graph, metadata).
+- **Each skill has a tight spec** — one job, one output shape, hard rules against fabrication.
 
-No Timeln account → the skill loads, but tools return a friendly *"sign up at timeln.app"* nudge. One signup at **[timeln.app/signup](https://timeln.app/signup)** and everything lights up.
+No Timeln account? Skills load, but tools return a friendly *"sign up at timeln.app"* nudge. One signup at **[timeln.app/signup](https://timeln.app/signup)** and everything lights up.
 
 ---
 
@@ -91,25 +95,29 @@ Restart your agent. Type `/mcp` to confirm `timeln` is listed with a green dot.
 
 ### 4 — Try it
 
-```
-second brain, what should I ship today?
-what should I learn today?
-based on my past data, what are my biggest gaps?
-```
+Pick a skill and trigger it with a natural phrase:
 
-The skill triggers automatically on any of those phrases.
+- **`timeln-find`:** "what should I learn today?" / "connect my ideas" / "based on my past data..."
+- **`timeln-plan`:** "plan my saves" / "what should I do this week?"
+- **`timeln-quickly`:** "quickly: timeline for Acme?" / "what did they say about SOC2?"
+- **`timeln-shipped`:** "have I built X before?" / "case study on X"
+- **`timeln-decided`:** "why did I pick Postgres?" / "ADR for database"
+- **`timeln-warned`:** "what bit me on Redis?" / "gotchas with pub/sub"
 
 ---
 
-## What the skill does
+## How each skill works
 
-1. Calls `whoami` to confirm your token.
-2. Pulls your recent documents (`get_recent_docs`) and subgraphs by topic (`get_topic_entities`).
-3. Applies **MECE gap analysis** (known / emerging / isolated / missing) and **PARA** (projects / areas / resources / archive).
-4. Returns a crisp, opinionated recommendation.
-5. If asked, generates an interactive D3 force-graph (`kg_interactive.html`) — triggered by natural language in the chat window, no scripts to run.
+| Skill | Input | Output | Latency | Use case |
+|---|---|---|---|---|
+| **timeln-find** | Natural question | Synthesis + MECE/PARA gaps + optional D3 graph | ~3-5s | "What should I focus on?" / exploration |
+| **timeln-plan** | Window (7/30/N days) | 6-stage HTML pipeline (PARA → RICE → Eisenhower → GTD → 4DX) | ~5-10s | Weekly planning, engagement reviews |
+| **timeln-quickly** | "fact?" or "quote?" | One sentence + citation | <1s | Mid-call, mid-pitch, under pressure |
+| **timeln-shipped** | Topic | Up to 3 hits (project + artifact link) | <2s | Sales / "have you done this?" |
+| **timeln-decided** | Topic | Decision + rationale + rejected alts | <2s | Architecture chat, re-onboarding |
+| **timeln-warned** | Topic | Up to 3 past failures + links | <2s | Pre-recommendation gut-check |
 
-See [`examples/second-brain.md`](examples/second-brain.md) for a sample output.
+For detailed examples and workflows, see each skill's `SKILL.md` file in `skills/`.
 
 ---
 
@@ -163,15 +171,18 @@ Pointing at a self-hosted Timeln backend? Override the base URL on either transp
 
 ---
 
-## Trigger phrases
+## Which skill for which moment?
 
-Say any of these to your agent:
-
-- "second brain" • "thinking partner" • "knowledge partner"
-- "what should I learn today?" / "what should I do today?"
-- "connect my ideas" • "show my knowledge gaps"
-- "build a knowledge graph" • "what's in my brain?"
-- "based on my past data, ..."
+| Moment | Use this |
+|---|---|
+| Mid-call, client asks "what timeline did we agree on?" | `timeln-quickly` |
+| Client says "have you done this before?" | `timeln-shipped` |
+| Pre-architecture chat: "should we use X?" | `timeln-warned` + `timeln-decided` |
+| Monday morning: what should I focus on this week? | `timeln-plan` or `timeln-find` |
+| Exploring a topic, learning from past work | `timeln-find` |
+| Proving you've shipped work in a proposal | `timeln-shipped` |
+| Relitigating a settled decision | `timeln-decided` |
+| About to recommend something, want to sanity-check | `timeln-warned` |
 
 ---
 
