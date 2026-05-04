@@ -1,4 +1,4 @@
-# Timeln action cascade — {{WINDOW}}
+# Timeln Plan — {{WINDOW}}
 
 **{{TOTAL_SAVES}} saves** processed through 6 frameworks · generated {{GENERATED_AT}} · account: {{ACCOUNT}}
 

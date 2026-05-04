@@ -1,9 +1,9 @@
 ---
-name: timeln-action-cascade
-description: "Take a window of recently-saved Timeln documents and run them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX) to produce a prioritized action plan. Output is a single HTML file styled as a vertical pipeline — each framework shows what came in, the decision rule, what passed forward, and what was dropped, with connector pills between stages showing volume of handoff. Use this skill whenever Rahul says 'cascade my last X days', saves from today, 'prioritize my recent Timeln saves', 'what should I do with my last week/month of saves', 'turn my saves into actions', 'run the framework cascade on my saves', 'eisenhower my saves', or any variation involving filtering recent Timeln captures into a single ranked plan with a WIG and next actions. Always uses Timeln MCP (`whoami`, `get_recent_docs` and/or `search_documents`, optional `get_document` / `query_knowledge` / `get_topic_entities`) for source data, applies LLM judgment for RICE scoring and MECE clustering, and writes the artifact to `/mnt/user-data/outputs/` when that path exists; otherwise to the workspace `outputs/` folder and reports the absolute path. If the user says non-personal vs personal, use the Timeln MCP server they indicate (`user-timeln` vs `user-timeln-personal`). If the server is missing, instructs the user to sign in at timeln.app and install MCP in Cursor settings."
+name: timeln-plan
+description: "Turn recent Timeln saves into one ranked action plan. Takes a window of recently-saved Timeln documents and runs them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX) to produce a prioritized action plan. Output is a single HTML file styled as a vertical pipeline — each framework shows what came in, the decision rule, what passed forward, and what was dropped, with connector pills between stages showing volume of handoff. Use this skill whenever the user says 'plan my saves', 'plan my week from Timeln', 'cascade my last X days', saves from today, 'prioritize my recent Timeln saves', 'what should I do with my last week/month of saves', 'turn my saves into actions', 'run the framework cascade on my saves', 'eisenhower my saves', or any variation involving filtering recent Timeln captures into a single ranked plan with a WIG and next actions. Always uses Timeln MCP (`whoami`, `get_recent_docs` and/or `search_documents`, optional `get_document` / `query_knowledge` / `get_topic_entities`) for source data, applies LLM judgment for RICE scoring and MECE clustering, and writes the artifact to `/mnt/user-data/outputs/` when that path exists; otherwise to the workspace `outputs/` folder and reports the absolute path. If the user says non-personal vs personal, use the Timeln MCP server they indicate (`user-timeln` vs `user-timeln-personal`). If the server is missing, instructs the user to sign in at timeln.app and install MCP in Cursor settings."
 ---
 
-# Timeln action cascade
+# Timeln Plan -- Saves Into One Ranked Plan
 
 Take N days of Timeln saves. Filter out the noise. Produce one ranked action plan.
 
@@ -36,14 +36,29 @@ A single file (HTML by default, MD if requested). **Preferred path:** `/mnt/user
 
 ### If Timeln MCP is missing or tools do not appear
 
-Stop and tell the user clearly:
+Stop and walk the user through setup:
 
-1. **Sign in to Timeln** at [https://timeln.app](https://timeln.app) (use the account that should back the library).
-2. **Install / enable the Timeln MCP server** in the client: Cursor → **Settings → MCP** → add the server using the config block or URL Timeln provides in-app (exact steps change — use Timeln’s in-product MCP / integrations page).
-3. **Complete auth** so the server runs as them (paste token or complete OAuth, per current Timeln docs — not hardcoded here).
-4. **Restart the agent / Cursor** after saving MCP config.
+1. **Sign up free** at [https://timeln.app/signup](https://timeln.app/signup).
+2. **Get an API token:** dashboard → **Settings → API Tokens → Create**.
+3. **Add the hosted MCP** to the agent config — Claude Code (`~/.claude.json`) or Cursor (`~/.cursor/mcp.json`):
 
-Optional verification prompt after setup: *“Call `whoami` on Timeln MCP and confirm my email.”*
+   ```json
+   {
+     "mcpServers": {
+       "timeln": {
+         "url": "https://timeln-mcp-production.up.railway.app/mcp",
+         "headers": {
+           "Authorization": "Bearer tln_YOUR_TOKEN_HERE"
+         }
+       }
+     }
+   }
+   ```
+
+   No local install — the MCP is hosted.
+4. **Restart the agent / Cursor** after saving the config.
+
+If `tln_...` is missing or invalid, MCP tools return a signup nudge — surface that verbatim. Verify with: *"Call `whoami` on Timeln MCP and confirm my email."*
 
 ## When the user invokes this
 

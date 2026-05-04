@@ -1,12 +1,12 @@
 {
-  "name": "timeln-secondbrain-skill",
+  "name": "timelnapp-skills",
   "version": "1.0.0",
   "description": "Turn your Timeln library into a live second brain for your AI agent",
   "keywords": ["second-brain", "knowledge-graph", "mcp", "para", "mece", "timeln", "agent-skill", "claude-skill"],
   "homepage": "https://timeln.app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/goodrahstar/timeln-secondbrain-skill.git"
+    "url": "https://github.com/Timelnapp/skills.git"
   },
   "license": "MIT",
   "author": "Timeln <support@timeln.app>"

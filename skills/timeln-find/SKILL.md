@@ -1,21 +1,21 @@
 ---
-name: timeln-secondbrain
-description: Acts as the user's virtual second brain -- pulls real data from their Timeln account (documents + knowledge graph) via the Timeln MCP server, applies MECE gap analysis and the PARA framework, then returns crisp learning/action recommendations and optionally a D3 knowledge-graph visualization. Trigger whenever the user says "second brain", "thinking partner", "knowledge partner", "what should I learn today", "what should I do today", "connect my ideas", "show my knowledge gaps", "build a knowledge graph", or "what's in my brain", or asks for insight from their past ingested data. Also trigger when the user asks any question prefixed with "based on my past data", "based on what I've learned", or "from my knowledge graph". Always use this skill -- never guess from memory alone.
+name: timeln-find
+description: Find anything in the user's Timeln memory -- search and recall -- pulls real data from their Timeln account (documents + knowledge graph) via the Timeln MCP server, applies MECE gap analysis and the PARA framework, then returns crisp learning/action recommendations and optionally a D3 knowledge-graph visualization. Trigger whenever the user says "search my memory", "look up in my memory", "recall from my notes", "second brain", "thinking partner", "knowledge partner", "what should I learn today", "what should I do today", "connect my ideas", "show my knowledge gaps", "build a knowledge graph", or "what's in my brain", or asks for insight from their past ingested data. Also trigger when the user asks any question prefixed with "based on my past data", "based on what I've learned", or "from my knowledge graph". Always use this skill -- never guess from memory alone.
 compatibility: "Requires a free Timeln account (timeln.app/signup) and an API token from Settings -> API Tokens. The MCP server is hosted -- no local install needed."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__get_recent_docs, mcp__timeln__search_documents, mcp__timeln__get_document, mcp__timeln__query_knowledge, mcp__timeln__get_topic_entities, mcp__timeln__ingest_text, mcp__timeln__ingest_url
 metadata:
   openclaw:
-    homepage: https://github.com/goodrahstar/timeln-secondbrain-skill
+    homepage: https://github.com/Timelnapp/skills
     install:
       - kind: npx
         package: skills
-        args: ["add", "goodrahstar/timeln-secondbrain-skill"]
+        args: ["add", "timelnapp/skills"]
 ---
 
-# Timeln Second Brain -- Your Thinking Partner
+# Timeln Find -- Search Your Second Brain
 
-Your second brain, wired to the user's real Timeln account. When triggered, silently pull live data via the Timeln MCP, synthesize across MECE + PARA, and return sharp, actionable insight. No hallucination -- only real nodes and edges.
+Search and recall over the user's real Timeln memory. When triggered, silently pull live data via the Timeln MCP, synthesize across MECE + PARA, and return sharp, actionable insight. No hallucination -- only real nodes and edges.
 
 ## Setup (one-time, user-side)
 

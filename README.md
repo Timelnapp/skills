@@ -24,7 +24,7 @@
 npx skills add timelnapp/skills
 ```
 
-> The skill lives in [`skills/timeln-secondbrain/`](skills/timeln-secondbrain/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
+> The skill lives in [`skills/timeln-find/`](skills/timeln-find/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
 
 **What you get:**
 - 🧠 Your AI answers grounded in **your** documents — no hallucinations.
@@ -145,7 +145,7 @@ Then use this config instead:
   "mcpServers": {
     "timeln": {
       "command": "python",
-      "args": ["/absolute/path/to/timeln-secondbrain-skill/mcp/server.py"],
+      "args": ["/absolute/path/to/skills/mcp/server.py"],
       "env": { "TIMELN_API_TOKEN": "tln_YOUR_TOKEN_HERE" }
     }
   }
