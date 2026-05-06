@@ -1,6 +1,12 @@
 ---
 name: timeln-plan
-description: "Turn recent Timeln saves into one ranked action plan. Takes a window of recently-saved Timeln documents and runs them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX) to produce a prioritized action plan. Output is a single HTML file styled as a vertical pipeline — each framework shows what came in, the decision rule, what passed forward, and what was dropped, with connector pills between stages showing volume of handoff. Use this skill whenever the user says 'plan my saves', 'plan my week from Timeln', 'cascade my last X days', saves from today, 'prioritize my recent Timeln saves', 'what should I do with my last week/month of saves', 'turn my saves into actions', 'run the framework cascade on my saves', 'eisenhower my saves', or any variation involving filtering recent Timeln captures into a single ranked plan with a WIG and next actions. Always uses Timeln MCP (`whoami`, `get_recent_docs` and/or `search_documents`, optional `get_document` / `query_knowledge` / `get_topic_entities`) for source data, applies LLM judgment for RICE scoring and MECE clustering, and writes the artifact to `/mnt/user-data/outputs/` when that path exists; otherwise to the workspace `outputs/` folder and reports the absolute path. If the user says non-personal vs personal, use the Timeln MCP server they indicate (`user-timeln` vs `user-timeln-personal`). If the server is missing, instructs the user to sign in at timeln.app and install MCP in Cursor settings."
+description: >
+  Trigger on "plan my saves", "plan my week from Timeln", "cascade my last X
+  days", "prioritize my recent saves", "what should I do with my saves", "turn
+  my saves into actions", "run the framework cascade", "eisenhower my saves".
+  Use when the user wants to convert recent Timeln captures into a ranked action
+  plan. NOT for quick recall (use timeln-quickly) or open-ended exploration
+  (use timeln-find).
 ---
 
 # Timeln Plan -- Saves Into One Ranked Plan
@@ -9,14 +15,14 @@ Take N days of Timeln saves. Filter out the noise. Produce one ranked action pla
 
 ## Context — what this skill produces
 
-The output is a **vertical pipeline visualization** with 6 stages stacked top-to-bottom. **This specific format is the deliverable** — it is the result of multiple iterations and is the format Rahul wants:
+The output is a **vertical pipeline visualization** with 6 stages stacked top-to-bottom. **This specific format is the deliverable** — it is the result of multiple iterations and is the validated format:
 
 - Each stage is a card with a left-border accent — teal for organise (PARA, MECE), amber for prioritise (RICE, Eisenhower), purple for execute (GTD, 4DX)
 - Each card has 4 sections: header (framework + count in), Input (chips with what came in), Decision rule (the actual rule in prose), Pass through (what survived — chips, table, or rows depending on stage)
 - Between stages: a connector pill showing volume + nature of handoff (e.g. "151 saves → 136 meaningful items pass forward")
 - Items dropped at each stage are explicitly shown as struck-through chips — the filtering must be visible
 
-**Do NOT produce alternative formats** — no kanban boards, no flowcharts, no clickable widgets. The pipeline file is the artifact. If Rahul wants a different visualization later, that's a separate request. The reason this matters: previous iterations included a kanban board and a simple cascade flowchart, but the pipeline-with-data-flow format won.
+**Do NOT produce alternative formats** — no kanban boards, no flowcharts, no clickable widgets. The pipeline file is the artifact. A different visualization is a separate request. The reason this matters: previous iterations included a kanban board and a simple cascade flowchart, but the pipeline-with-data-flow format won.
 
 ## Outcome
 
@@ -145,7 +151,7 @@ If `para_category` is present in the data, count by it. If not, infer per save:
 
 Extract topic tags from all saves. Aggregate frequencies. Group the top ~20 tags into **exactly 4** non-overlapping clusters using semantic similarity, not exact matching.
 
-Standard cluster names for Rahul's domain (adapt if frequencies suggest different ones):
+Example cluster names (adapt based on the user's actual topic frequencies):
 
 - **Builder Stack** — `claude code`, `ai agents`, `software development`, `developer tools`, `agentic systems`, `MCP`
 - **Cognition & KM** — `knowledge management`, `second brain`, `obsidian`, `memory`, `note-taking`
@@ -169,7 +175,7 @@ If the corpus suggests a 5th high-leverage bet (e.g. content repurposing showing
 Score each bet using **RICE = (R × I × C) ÷ E**:
 
 - **Reach** (1–10): how many people / users / dollars are touched
-- **Impact** (1–10): how much it moves Rahul's actual goal (Timeln pipeline, narrative, revenue)
+- **Impact** (1–10): how much it moves the user's actual goals (pipeline, narrative, revenue)
 - **Confidence** (0.3–1.0): probability this works as imagined
 - **Effort** (1–10): size of the lift, higher = more work
 
@@ -221,6 +227,19 @@ Write the WIG as `From X to Y by [date]` — concrete metric + deadline. The dea
 Then 2 lead measures — predictive, daily/weekly, within Rahul's direct control. Examples:
 - "3 ship touches per week (demo, post, or outbound)"
 - "2 hours blocked before noon for WIG work — no new saves"
+
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "The corpus is small, I'll invent saves to fill the pipeline" | Every item must trace to real MCP data. Flag thin data, don't pad it. |
+| "RICE scoring feels arbitrary, I'll skip the numbers" | Show R, I, C, E explicitly. Arbitrary-with-numbers is better than hidden judgment. |
+| "GTD actions are hard to phrase as verb+object+where" | If you can't phrase it that way, the item is still a project. Break it down further. |
+| "I'll add a kanban board for better visualization" | The pipeline is the only deliverable. No alternative formats. |
+| "Eisenhower Q1 has 8 items, they're all urgent" | Cap Q1 at 4. If everything is urgent, nothing is. Prioritize harder. |
+| "I'll duplicate the full HTML in the chat response" | The file is the artifact. Chat summary under 80 words. |
+
+**This is a flexible skill** for synthesis and scoring, but **rigid on output format** — always produce the 6-stage pipeline.
 
 Then a cadence: "15 min weekly scoreboard — lag + both leads."
 

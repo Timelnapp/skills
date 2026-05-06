@@ -1,6 +1,11 @@
 ---
 name: timeln-decided
-description: Anti-hallucination skill -- when the user (or Claude) is about to relitigate a settled architecture decision, pull the user's actual past decision and the actual stated rationale from Timeln. Replaces Claude's generic tradeoff lecture with the user's real reasoning at the time. Trigger on "what did I decide about X", "why did I pick X", "did I choose X over Y", "what was my call on X", "ADR for X", "is there a decision on X", "have I picked between X and Y". Returns the decision, the date, the stated why, and what was rejected -- all from saved ADRs/retros/design docs. If no decision on file, says so plainly and surfaces adjacent notes -- never fabricates a rationale.
+description: >
+  Trigger on "what did I decide about X", "why did I pick X", "did I choose
+  X over Y", "what was my call on X", "ADR for X", "is there a decision on X",
+  "have I picked between X and Y". Use when the user wants to recall a settled
+  past decision, not make a new one. NOT for fresh tradeoff analysis (route to
+  Claude or timeln-find).
 compatibility: "Requires the Timeln MCP. See timeln-find/SKILL.md for one-time setup."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__query_knowledge, mcp__timeln__search_documents, mcp__timeln__get_document
@@ -63,3 +68,14 @@ no decision on file for <topic>
 - **Surface rejected alternatives** when the source has them. Most ADRs do; most informal notes don't. If absent, omit the line.
 - **Single decision per call.** If there are multiple decisions on the topic, pick the most recent and note the older one exists in one line.
 - Never echo the API token.
+
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "No ADR found, but I know the common tradeoffs for this tech" | Say `no decision on file`. Training-data tradeoffs are not the user's decision. |
+| "The rationale is long, I'll summarize" | Quote verbatim (1-3 sentences). The user's own words matter more than a clean summary. |
+| "I found notes about this topic, close enough" | Notes are not decisions. Route to `adjacent notes` format. |
+| "Multiple decisions exist, I'll merge them" | Pick the most recent. Note the older one exists. Don't merge. |
+
+**This is a rigid skill.** Follow the output shape exactly. No improvisation.

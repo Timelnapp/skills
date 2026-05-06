@@ -1,6 +1,13 @@
 ---
 name: timeln-find
-description: Find anything in the user's Timeln memory -- search and recall -- pulls real data from their Timeln account (documents + knowledge graph) via the Timeln MCP server, applies MECE gap analysis and the PARA framework, then returns crisp learning/action recommendations and optionally a D3 knowledge-graph visualization. Trigger whenever the user says "search my memory", "look up in my memory", "recall from my notes", "second brain", "thinking partner", "knowledge partner", "what should I learn today", "what should I do today", "connect my ideas", "show my knowledge gaps", "build a knowledge graph", or "what's in my brain", or asks for insight from their past ingested data. Also trigger when the user asks any question prefixed with "based on my past data", "based on what I've learned", or "from my knowledge graph". Always use this skill -- never guess from memory alone.
+description: >
+  Trigger on "search my memory", "look up in my memory", "recall from my notes",
+  "second brain", "thinking partner", "what should I learn today", "connect my
+  ideas", "show my knowledge gaps", "build a knowledge graph", "what's in my
+  brain", or any question prefixed with "based on my past data" / "from my
+  knowledge graph". Use for open-ended search, synthesis, and exploration over
+  the user's Timeln memory. NOT for quick mid-call recall (use timeln-quickly),
+  past decisions (use timeln-decided), or weekly planning (use timeln-plan).
 compatibility: "Requires a free Timeln account (timeln.app/signup) and an API token from Settings -> API Tokens. The MCP server is hosted -- no local install needed."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__get_recent_docs, mcp__timeln__search_documents, mcp__timeln__get_document, mcp__timeln__query_knowledge, mcp__timeln__get_topic_entities, mcp__timeln__ingest_text, mcp__timeln__ingest_url
@@ -134,5 +141,14 @@ When the user asks a concrete question (not a general "second brain" prompt):
 - Never fabricate node names, titles, or relationships. If a tool returns nothing, say so.
 - Never include the user's API token in any output or tool echo.
 
-For examples, see [EXAMPLES.md](EXAMPLES.md).
-For MCP API reference, see [REFERENCE.md](REFERENCE.md).
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "The MCP returned thin results, I'll supplement from training data" | Say the data is thin. Never mix real memory with invented knowledge. |
+| "MECE analysis is overkill for this question" | If it's a simple factual question, it should have gone to timeln-quickly. If it's here, do the full synthesis. |
+| "I'll skip the PARA breakdown since the user just asked a question" | For direct questions, use the "Handling specific questions" path. PARA/MECE is for exploratory prompts. |
+| "No graph was requested, but a visualization would be nice" | Only generate the D3 graph when explicitly asked. Don't pad the response. |
+| "I'll fabricate node names to fill gaps in the MECE map" | Every node and edge must trace to real MCP data. Empty quadrants are valid. |
+
+**This is a flexible skill.** Adapt the depth of synthesis to the question, but never fabricate data.
