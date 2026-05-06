@@ -1,6 +1,8 @@
 {
   "name": "timelnapp-skills",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "type": "module",
+  "main": ".opencode/plugins/timeln-skills.js",
   "description": "Turn your Timeln library into a live second brain for your AI agent",
   "keywords": ["second-brain", "knowledge-graph", "mcp", "para", "mece", "timeln", "agent-skill", "claude-skill"],
   "homepage": "https://timeln.app",

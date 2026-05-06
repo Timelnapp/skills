@@ -24,7 +24,7 @@
 
 ## Quickstart
 
-Give your agent a second brain: [Claude Code](#claude-code), [Cursor](#cursor).
+Give your agent a second brain: [Claude Code](#claude-code), [Codex CLI](#codex-cli), [Codex App](#codex-app), [Cursor](#cursor), [Gemini CLI](#gemini-cli), [OpenCode](#opencode), [GitHub Copilot CLI](#github-copilot-cli).
 
 ```bash
 npx skills add timelnapp/skills
@@ -58,13 +58,39 @@ Because the skills trigger on natural phrases, you don't need to do anything spe
 
 ## Installation
 
+Installation differs by agent. If you use more than one, install Timeln Skills separately for each.
+
+**Every agent** needs the hosted Timeln MCP server — see [Connect the MCP Server](#connect-the-mcp-server) after installing.
+
 ### Claude Code
+
+Install the plugin from the marketplace:
+
+```bash
+/plugin install timeln-skills@timeln-skills
+```
+
+Or install manually:
 
 ```bash
 npx skills add timelnapp/skills
 ```
 
 Skills are auto-discovered from `~/.claude/skills/`.
+
+### Codex CLI
+
+Open the plugin search interface:
+
+```bash
+/plugins
+```
+
+Search for `timeln-skills` and select **Install Plugin**.
+
+### Codex App
+
+In the Codex app, click **Plugins** in the sidebar. Find **Timeln Skills** in the Productivity section and click **+**.
 
 ### Cursor
 
@@ -74,9 +100,51 @@ npx skills add timelnapp/skills
 
 Skills are auto-discovered from `~/.cursor/skills/` (or `.cursor/skills/` inside a project).
 
+Or install via Cursor Agent chat:
+
+```text
+/add-plugin timeln-skills
+```
+
+### Gemini CLI
+
+Install the extension:
+
+```bash
+gemini extensions install https://github.com/Timelnapp/skills
+```
+
+Update later:
+
+```bash
+gemini extensions update timeln-skills
+```
+
+### OpenCode
+
+Tell OpenCode:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/Timelnapp/skills/main/.opencode/INSTALL.md
+```
+
+Detailed docs: [.opencode/INSTALL.md](.opencode/INSTALL.md)
+
+### GitHub Copilot CLI
+
+Copilot CLI auto-detects Timeln Skills via the session-start hook when `COPILOT_CLI` is set. Install manually:
+
+```bash
+npx skills add timelnapp/skills
+```
+
 ### Connect the MCP Server
 
-Both agents need the hosted Timeln MCP. Add to `~/.claude.json` (Claude Code) or `~/.cursor/mcp.json` (Cursor):
+All agents need the hosted Timeln MCP. Add to your agent's MCP config:
+
+- Claude Code: `~/.claude.json`
+- Cursor: `~/.cursor/mcp.json`
+- Others: your agent's MCP configuration file
 
 ```json
 {
@@ -97,7 +165,7 @@ No Python, no local daemon — the MCP is hosted.
 
 1. **[timeln.app/signup](https://timeln.app/signup)** — free, Google SSO, no credit card.
 2. **[app.timeln.app](https://app.timeln.app) → Settings → API Tokens → Create**. Copy the `tln_...` token (shown once).
-3. Restart your agent. Type `/mcp` to confirm `timeln` is listed with a green dot.
+3. Restart your agent. Type `/mcp` (or equivalent) to confirm `timeln` is listed.
 
 No Timeln account? Skills load, but tools return a friendly *"sign up at timeln.app"* nudge. One signup and everything lights up.
 

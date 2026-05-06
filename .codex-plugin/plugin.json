@@ -1,0 +1,43 @@
+{
+  "name": "timeln-skills",
+  "version": "2.0.0",
+  "description": "Ground your coding agent in your real memory — recall facts, decisions, shipped work, and past failures from your Timeln second brain via MCP.",
+  "author": {
+    "name": "Timeln",
+    "email": "support@timeln.app",
+    "url": "https://timeln.app"
+  },
+  "homepage": "https://timeln.app",
+  "repository": "https://github.com/Timelnapp/skills",
+  "license": "MIT",
+  "keywords": [
+    "second-brain",
+    "knowledge-graph",
+    "mcp",
+    "memory",
+    "recall",
+    "anti-hallucination",
+    "planning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Timeln Skills",
+    "shortDescription": "6 skills that ground your AI in your real memory — no hallucinations, just facts",
+    "longDescription": "Wire your coding agent to your real Timeln memory. Six skills for six moments: mid-call recall, weekly planning, proving shipped work, recalling decisions, surfacing past failures, and open-ended exploration — all grounded in your actual data via the Timeln MCP server.",
+    "developerName": "Timeln",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "defaultPrompt": [
+      "What should I focus on this week?",
+      "Have I built something like this before?",
+      "Why did I pick Postgres over MySQL?"
+    ],
+    "websiteURL": "https://timeln.app",
+    "brandColor": "#ea580c",
+    "logo": "./assets/timeln-logo.png",
+    "screenshots": []
+  }
+}
