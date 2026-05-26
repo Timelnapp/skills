@@ -1,0 +1,24 @@
+{
+  "name": "timeln-skills",
+  "displayName": "Timeln Skills",
+  "description": "Second-brain skills: recall, decisions, shipped work, failures, planning — all from your real Timeln memory",
+  "version": "2.0.0",
+  "author": {
+    "name": "Timeln",
+    "email": "support@timeln.app"
+  },
+  "homepage": "https://timeln.app",
+  "repository": "https://github.com/Timelnapp/skills",
+  "license": "MIT",
+  "keywords": [
+    "second-brain",
+    "knowledge-graph",
+    "mcp",
+    "memory",
+    "recall",
+    "anti-hallucination",
+    "planning"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks-cursor.json"
+}

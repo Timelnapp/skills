@@ -1,6 +1,11 @@
 ---
 name: timeln-warned
-description: Anti-hallucination skill -- before recommending a tech approach, surface the user's own past failures, retros, post-mortems, and "lessons learned" notes on that topic from Timeln. Replaces Claude's generic "best practices" with the user's actual scars. Trigger on "what bit me on X", "have I been burned by X", "gotchas with X", "what went wrong last time with X", "warn me about X", "any retros on X", "past incidents with X", or any moment where the user is about to commit to an approach and wants a sanity check against their own history. Returns up to 3 ranked failures with one-line summaries and source pointers. If memory has nothing, says "no past incidents on file" -- never invents pitfalls from training data.
+description: >
+  Trigger on "what bit me on X", "have I been burned by X", "gotchas with X",
+  "what went wrong last time with X", "warn me about X", "any retros on X",
+  "past incidents with X". Use when the user wants to sanity-check an approach
+  against their own failure history. NOT for general pitfalls (ask Claude
+  directly) or past decisions (use timeln-decided).
 compatibility: "Requires the Timeln MCP. See timeln-find/SKILL.md for one-time setup."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__query_knowledge, mcp__timeln__search_documents, mcp__timeln__get_topic_entities, mcp__timeln__get_document
@@ -64,3 +69,14 @@ Higher severity = surface higher. Signal weights (rough):
 - **Cap at 3.** If there are more, pick the 3 most severe + recent.
 - **Cite the source.** Doc title only -- the user clicks through if they want the full retro.
 - Never echo the API token.
+
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "No retros found, but here are common pitfalls with this tech" | Say `no past incidents on file`. Generic pitfalls are not the user's scars. |
+| "The incident is old, probably not relevant anymore" | Surface it. The user decides relevance. Old scars are still scars. |
+| "Found a note mentioning the topic, I'll frame it as a warning" | Only surface docs with actual pain signal (incident, retro, broke, failed). A mention is not a warning. |
+| "Three hits feels thin, I'll add context from training data" | Cap at what memory has. One real scar beats three invented ones. |
+
+**This is a rigid skill.** Follow the output shape exactly. No improvisation.

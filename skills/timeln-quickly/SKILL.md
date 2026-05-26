@@ -1,6 +1,11 @@
 ---
 name: timeln-quickly
-description: Mid-call hotkey for one-breath recall over the user's Timeln memory. Returns either a single-sentence fact OR a verbatim quote -- never both, never a paragraph -- with one citation. Use when the user is in a high-stakes moment (call, meeting, dispute) and needs an answer in seconds. Trigger on "quickly: X", "quickly recall X", "what did I say about X", "what did they say about X", "find the quote on X", "remind me -- X", "did Acme mention X", "what was the number for X", "what date did I commit to X". Auto-picks fact mode vs quote mode from phrasing. If memory has nothing, returns "no record" -- never invents.
+description: >
+  Trigger on "quickly: X", "quickly recall X", "what did I say about X",
+  "what did they say about X", "find the quote on X", "remind me -- X",
+  "did [name] mention X", "what was the number for X", "what date did I
+  commit to X". Use when the user needs a one-breath answer mid-call or
+  mid-pitch. NOT for exploration (use timeln-find) or planning (use timeln-plan).
 compatibility: "Requires the Timeln MCP. See timeln-find/SKILL.md for one-time setup (signup at timeln.app, API token, MCP config block)."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__query_knowledge, mcp__timeln__search_documents, mcp__timeln__get_document
@@ -68,3 +73,15 @@ no record
 - **Multi-part questions:** split into two `timeln-quickly` hits. Do not merge.
 - **No record beats a guess.** If unsure, say no record.
 - Never echo the API token.
+
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "I'll add a brief explanation for context" | This is a hotkey, not a search. One sentence max. The user is mid-call. |
+| "The quote isn't exact so I'll paraphrase" | Mark it `paraphrased from notes`. Never present a paraphrase as a quote. |
+| "I found two good answers, I'll show both" | Pick the most recent. One answer only. |
+| "Memory is thin so I'll supplement from training data" | Say `no record`. Fabrication defeats the entire purpose. |
+| "The user probably wants more detail" | They don't. They said "quickly". Respect the constraint. |
+
+**This is a rigid skill.** Follow the output shape exactly. No improvisation.

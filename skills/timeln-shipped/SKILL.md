@@ -1,6 +1,11 @@
 ---
 name: timeln-shipped
-description: Mid-pitch proof-of-work lookup. When a client/prospect asks "have you done this before?" -- surface the user's actually-shipped past work matching the topic, with artifact pointers (repo URL, doc title, demo link) ready to paste into the chat. Distinguishes shipped projects from articles the user merely saved. Trigger on "have I shipped X", "have I built X before", "show me proof of X", "case study for X", "past work on X", "what have I delivered on X", "who have I done X for". Returns up to 3 hits, each one line. If nothing shipped, says so plainly -- never inflates a saved article into "past work".
+description: >
+  Trigger on "have I shipped X", "have I built X before", "show me proof of X",
+  "case study for X", "past work on X", "what have I delivered on X", "who have
+  I done X for". Use when the user needs proof of actually-shipped work mid-pitch
+  or in a proposal. NOT for past learning (use timeln-find) or past failures
+  (use timeln-warned).
 compatibility: "Requires the Timeln MCP. See timeln-find/SKILL.md for one-time setup."
 license: MIT
 allowed-tools: mcp__timeln__whoami, mcp__timeln__query_knowledge, mcp__timeln__search_documents, mcp__timeln__get_topic_entities, mcp__timeln__get_document
@@ -64,3 +69,14 @@ related saved notes (not delivered work):
 - **One line per hit.** What was built, for whom (if recorded), when. No marketing prose.
 - **Never inflate.** If the user has saved articles about Stripe but never built a Stripe integration, the answer is `no shipped work on file` -- not "you've explored Stripe extensively."
 - Never echo the API token.
+
+## Common failure modes
+
+| Rationalization | Why it's wrong |
+|---|---|
+| "They saved an article about Stripe, so they have Stripe experience" | Saved != shipped. A bookmark is not proof of work. Exclude. |
+| "No shipped work found, but I can describe their general expertise" | Say `no shipped work on file`. Fabricated credentials are worse than none. |
+| "The artifact link is missing, I'll skip the citation" | Mark as `(no link on file)`. The user can still click through to the source doc. |
+| "Found 5 matches, I'll show all of them" | Cap at 3, most recent. This is a hotkey, not a portfolio review. |
+
+**This is a rigid skill.** Follow the output shape exactly. No improvisation.
