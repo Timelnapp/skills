@@ -3,3 +3,31 @@ node_modules/
 outputs/
 *.log
 
+# Python runtimes and bytecode (skill engines use setup.sh + requirements.txt)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ML / TTS model caches and weights
+.cache/
+.huggingface/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Generated audio (podcast render output)
+*.mp3
+*.wav
+*.m4a
+
