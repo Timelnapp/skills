@@ -10,7 +10,7 @@ Context switching is hard, especially when you're a solopreneur juggling project
 
 These skills are designed to be small, easy to adapt, and composable. They work with any model. They're based on decades of consulting and applied experiences. Hack around with them. Make them your own. Enjoy.
 
-When the agent needs something specific from your memory - a past decision, a quote from a call, what you've actually shipped - it reaches into your Timeln second brain via MCP. Every answer cites a source. If memory has nothing, the skill says so plainly — never invents.
+When the agent needs something specific from your memory - a past decision, a quote from a call, what you've actually shipped - it reaches into your Timeln second brain via MCP. Every answer cites a source. If memory has nothing, the skill says so plainly - never invents.
 
 ## Quickstart
 
