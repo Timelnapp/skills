@@ -31,7 +31,7 @@ Turn **Timeln saves** into **one MP3** (Timeln Podcast). User listens; timeln-fi
 ## Setup (once)
 
 ```bash
-cd .agents/skills/timeln-podcast/engine && ./setup.sh
+cd .agents/skills/thinking-os/timeln-podcast/engine && ./setup.sh
 ```
 
 Needs: Python 3.11, espeak, ffmpeg. macOS: `brew install espeak`.
@@ -105,7 +105,7 @@ Look at the printed output: every section should have a healthy mix of HOST_A an
 From skill root, with CWD = where the MP3 should land:
 
 ```bash
-cd .agents/skills/timeln-podcast
+cd .agents/skills/thinking-os/timeln-podcast
 ./render.sh /path/to/script.md timeln-podcast-2026-05-26
 ```
 

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "consulting-os/engagement-passport",
+  "title": "Engagement Passport",
+  "type": "object",
+  "required": ["client", "slug", "stage"],
+  "properties": {
+    "client": { "type": "string" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "CAPTURE", "RESEARCH", "FRAME", "DESIGN", "INTEGRITY_3_5",
+        "ARCHITECT", "BUILD", "REVIEW", "PACKAGE", "PURSUE",
+        "DELIVER", "CLOSE", "SUMMARY"
+      ]
+    },
+    "option_selected": { "type": ["string", "null"] },
+    "source_mode": { "type": ["string", "null"], "enum": ["standard", "cold_start", null] },
+    "revision_loop": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "artifacts": { "type": "object", "additionalProperties": { "type": "string" } },
+    "checkpoints": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+    "timeln_pulls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": { "type": "string" },
+          "skill": { "type": "string" },
+          "artifact": { "type": "string" }
+        }
+      }
+    }
+  }
+}

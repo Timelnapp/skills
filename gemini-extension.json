@@ -1,6 +1,6 @@
 {
   "name": "timeln-skills",
-  "description": "Second-brain skills: ground your agent in your real Timeln memory — recall, decisions, shipped work, failures, planning",
+  "description": "Two skill packs: thinking-os (memory & recall grounded in Timeln MCP) and consulting-os (solo-founder pursuit pipeline with human-in-the-loop gates)",
   "version": "2.0.0",
   "contextFileName": "GEMINI.md"
 }

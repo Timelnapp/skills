@@ -1,6 +1,6 @@
 {
   "name": "timeln-skills",
-  "description": "Second-brain skills library — ground your agent in your real memory via Timeln MCP",
+  "description": "Two skill packs: thinking-os (memory grounded in Timeln MCP) and consulting-os (solo-founder pursuit pipeline)",
   "owner": {
     "name": "Timeln",
     "email": "support@timeln.app"
@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "timeln-skills",
-      "description": "Second-brain skills for Claude Code: recall, decisions, shipped work, failures, planning — all from your real Timeln memory",
+      "description": "Two skill packs for Claude Code: thinking-os (memory & recall from your real Timeln second brain) and consulting-os (solo-founder pursuit pipeline with human-in-the-loop gates)",
       "version": "2.0.0",
       "source": "./",
       "author": {

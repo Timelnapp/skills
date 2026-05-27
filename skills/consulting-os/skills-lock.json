@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "skills": {
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
+      "computedHash": "a5c65e76275008b469962f7bee8b34866f1c9b0709f4886e71c8e731735640e4"
+    },
+    "timeln-decided": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-decided/SKILL.md",
+      "computedHash": "1bb135e7645d02f78c0efa7fa8514160f5ce58824cd850b9065f8522c40a580c"
+    },
+    "timeln-find": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-find/SKILL.md",
+      "computedHash": "59ab08524d85709f49394202fd7f2dc492739c305e88d686e36e0df2851a1000"
+    },
+    "timeln-plan": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-plan/SKILL.md",
+      "computedHash": "4d7f99db1f6b6327845d2eb77f7d141456656056bf4f6ee2ded2dd5eafbe969b"
+    },
+    "timeln-quickly": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-quickly/SKILL.md",
+      "computedHash": "b7eab0b7c1d4dc875a93a27bd67f83a8c57481ab11c162583fbee6ce1fd18c05"
+    },
+    "timeln-shipped": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-shipped/SKILL.md",
+      "computedHash": "32b60d41421d4cbbc522d96a808cb7173a1ac03ca4269c900c33d6c2a84ca3e4"
+    },
+    "timeln-warned": {
+      "source": "timelnapp/skills",
+      "sourceType": "github",
+      "skillPath": "skills/thinking-os/timeln-warned/SKILL.md",
+      "computedHash": "74e249c6ad0518448143c3fc86f944cfada5b4fdfbc0c4f54c9698af80de9482"
+    }
+  }
+}

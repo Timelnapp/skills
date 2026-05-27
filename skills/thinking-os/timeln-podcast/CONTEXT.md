@@ -61,7 +61,7 @@ What ships in `timelnapp/skills`: `SKILL.md`, `references/`, and `engine/` (scri
 _Avoid_: Committing venv, prebuilt binaries, platform-specific wheels in git.
 
 **Development source**:
-Canonical skill edits happen in `operations/.agents/skills/timeln-podcast/`. Publishing is a manual PR into `timelnapp/skills` per release — not the other way around.
+Canonical skill edits happen in `operations/.agents/skills/thinking-os/timeln-podcast/`. Publishing is a manual PR into `timelnapp/skills` per release — not the other way around.
 _Avoid_: Treating the registry copy as authoritative, dual maintenance without PR discipline.
 
 **Registry metadata**:

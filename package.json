@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "type": "module",
   "main": ".opencode/plugins/timeln-skills.js",
-  "description": "Ground Claude Code and Cursor in your real memory with 6 agent skills. Deploy timeln-find for exploration, timeln-plan for strategy, timeln-quickly for instant recalls, timeln-shipped for proof of work, timeln-decided for architecture decisions, and timeln-warned for failure prevention. Features MCP integration, knowledge graph synthesis, RAG-powered search, and zero hallucinations.",
-  "keywords": ["claude-code", "claude-code-skills", "timeln", "agent-skills", "mcp-server", "memory-grounding", "knowledge-graph", "anti-hallucination", "rag", "ai-assistant", "ai-tools", "agentic-ai", "cursor-skills", "model-context-protocol", "anthropic-claude", "grounded-ai", "agent-framework", "developer-tools", "second-brain", "knowledge-management", "para", "mece"],
+  "description": "Two skill packs for AI coding agents. thinking-os: 6 memory skills grounded in your real Timeln second brain via MCP, plus a local TTS engine — zero hallucinations, every answer cited. consulting-os: 11-skill solo-founder pursuit pipeline with human-in-the-loop gates at every stage.",
+  "keywords": ["claude-code", "claude-code-skills", "timeln", "agent-skills", "mcp-server", "memory-grounding", "knowledge-graph", "anti-hallucination", "rag", "ai-assistant", "ai-tools", "agentic-ai", "cursor-skills", "model-context-protocol", "anthropic-claude", "grounded-ai", "agent-framework", "developer-tools", "second-brain", "knowledge-management", "para", "mece", "consulting", "proposal-pipeline", "tts"],
   "homepage": "https://timeln.app",
   "repository": {
     "type": "git",

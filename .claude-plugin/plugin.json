@@ -1,6 +1,6 @@
 {
   "name": "timeln-skills",
-  "description": "Second-brain skills for Claude Code: ground your agent in your real Timeln memory — recall, decisions, shipped work, failures, planning",
+  "description": "Two skill packs for Claude Code: thinking-os (memory & recall from your real Timeln second brain) and consulting-os (solo-founder pursuit pipeline with human-in-the-loop gates)",
   "version": "2.0.0",
   "author": {
     "name": "Timeln",

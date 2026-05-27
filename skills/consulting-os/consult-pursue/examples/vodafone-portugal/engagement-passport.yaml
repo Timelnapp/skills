@@ -1,0 +1,31 @@
+# Engagement passport — Vodafone Portugal agentic customer support
+# All artifacts live in this folder (prospects/vodafone-portugal/). Resume: /cos-resume
+
+client: Vodafone Portugal
+slug: vodafone-portugal
+stage: PURSUE
+option_selected: POC
+source_mode: cold_start
+revision_loop: 0
+
+artifacts:
+  input_dir: Input/
+  research: 00-research-public.md
+  pack: Vodafone-Portugal-Engagement-Proposal-Pack.md
+  pursue_email: pursue/email.md
+  pursue_script: pursue/call-script.md
+
+checkpoints:
+  pursuit_approved: "2026-05-22"
+  frame_approved: "2026-05-22"
+  option_picked: "2026-05-22"
+  ship_approved: "2026-05-22"
+  sent_to_client: null
+
+timeln_pulls:
+  - stage: PURSUE
+    skill: timeln-shipped
+    note: Solar Manager, AEON CCI, TBC Insurance agentic RAG
+  - stage: PURSUE
+    skill: timeln-quickly
+    note: no Vodafone-specific record — public SuperTOBi stats used

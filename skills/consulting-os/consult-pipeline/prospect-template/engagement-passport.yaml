@@ -1,0 +1,47 @@
+# Engagement passport
+# Read/write by consult-pipeline. Resume with /cos-resume
+
+client: TBD
+slug: TBD
+stage: CAPTURE
+option_selected: null
+source_mode: null   # null | standard | cold_start
+revision_loop: 0
+
+artifacts:
+  input_dir: Input/
+  research: Output/{Client}-Engagement/00-research.md
+  research_public: 00-research-public.md              # cold-start: at slug root, not under Output/
+  frame: Output/{Client}-Engagement/01-frame.md
+  arc: Output/{Client}-Engagement/02-arc.md
+  gates: Output/{Client}-Engagement/03-gates.md
+  acceptance: Output/{Client}-Engagement/04-acceptance.md
+  commercial: Output/{Client}-Engagement/05-commercial.md
+  integrity_3_5: Output/{Client}-Engagement/integrity-3.5.md
+  integrity_5_5: Output/{Client}-Engagement/integrity-5.5.md
+  architecture_layered: Output/{Client}-Engagement/1-layered-architecture.drawio
+  architecture_sequence: Output/{Client}-Engagement/2-sequence-diagram.md
+  lint: Output/{Client}-Engagement/lint-report.md
+  red_team: Output/{Client}-Engagement/red-team-report.md
+  pack: Output/{Client}-Engagement/{Client}-Engagement-Proposal-Pack.md   # full pipeline
+  pack_cold_start: {Client}-Engagement-Proposal-Pack.md                     # cold-start: slug root
+  pursue_email: Output/{Client}-Engagement/pursue/email.md                # full pipeline
+  pursue_email_cold_start: pursue/email.md                                  # cold-start: slug root
+  pursue_script: Output/{Client}-Engagement/pursue/call-script.md
+  pursue_script_cold_start: pursue/call-script.md
+  close: Output/{Client}-Engagement/09-close.md
+  summary: Output/{Client}-Engagement/10-process-summary.md
+
+checkpoints:
+  pursuit_approved: null
+  frame_approved: null
+  option_picked: null
+  integrity_3_5_pass: null
+  diagram_approved: null
+  variant_selected: null
+  ship_approved: null
+  sent_to_client: null
+
+timeln_pulls: []
+
+# Stages: CAPTURE | RESEARCH | FRAME | DESIGN | INTEGRITY_3_5 | ARCHITECT | BUILD | REVIEW | PACKAGE | PURSUE | DELIVER | CLOSE | SUMMARY

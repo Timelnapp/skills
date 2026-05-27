@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_ROOT="$(dirname "$SCRIPT_DIR")"
 
-BOOTSTRAP_FILE="$PLUGIN_ROOT/skills/timeln-find/SKILL.md"
+BOOTSTRAP_FILE="$PLUGIN_ROOT/skills/thinking-os/timeln-find/SKILL.md"
 
 if [ ! -f "$BOOTSTRAP_FILE" ]; then
   echo '{"error": "timeln-skills: bootstrap file not found"}' >&2
@@ -16,7 +16,7 @@ import sys, json
 print(json.dumps(sys.stdin.read()))
 " 2>/dev/null || cat "$BOOTSTRAP_FILE" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
 
-BOOTSTRAP="You have access to the Timeln Skills plugin. It provides 6 skills for grounding your responses in the user's real Timeln memory via MCP. Skills: timeln-find (search/synthesis), timeln-plan (weekly planning), timeln-quickly (mid-call recall), timeln-shipped (proof of work), timeln-decided (past decisions), timeln-warned (past failures). All skills require the Timeln MCP server. Never fabricate data — if memory has nothing, say so."
+BOOTSTRAP="You have access to the Timeln Skills plugin, organised into two packs. thinking-os: 6 memory skills grounded in the user's Timeln second brain via MCP — timeln-find (search/synthesis), timeln-plan (weekly planning), timeln-quickly (mid-call recall), timeln-shipped (proof of work), timeln-decided (past decisions), timeln-warned (past failures) — plus timeln-podcast (local TTS). consulting-os: 11-skill solo-founder pursuit pipeline (consult-pipeline orchestrates frame/arc/gates/acceptance/commercial/package/integrity/lint/red-team/pursue) with mandatory human checkpoints at every stage and slash commands /cos-*. Memory skills require the Timeln MCP server. Never fabricate data — if memory has nothing, say so."
 
 BOOTSTRAP_ESCAPED=$(echo "$BOOTSTRAP" | python3 -c "
 import sys, json

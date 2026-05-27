@@ -1,258 +1,96 @@
-<p align="center">
-  <img src="docs/ascii-banner.svg" alt="TIMELN SECOND BRAIN" width="760" />
-</p>
+# Timeln Skills
 
-<h1 align="center">Timeln Skills</h1>
+Agent skills that ground your AI in your real memory — not its training data.
 
-<p align="center">
-  <em>A complete second-brain methodology for your AI agent — grounded in your real memory, not training data.</em>
-</p>
-
-<p align="center">
-  <a href="https://timeln.app/download/skill"><img alt="Docs" src="https://img.shields.io/badge/docs-timeln.app-ea580c?style=flat-square" /></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-black?style=flat-square" /></a>
-  <a href="https://modelcontextprotocol.io"><img alt="MCP" src="https://img.shields.io/badge/MCP-compatible-6366f1?style=flat-square" /></a>
-  <a href="https://claude.com/claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-ready-d97706?style=flat-square" /></a>
-  <a href="https://timeln.app/signup"><img alt="Get Timeln" src="https://img.shields.io/badge/Try%20on-timeln.app-ea580c?style=flat-square" /></a>
-</p>
-
-<!-- Demo GIF: add docs/demo.gif to enable
-<p align="center">
-  <img src="docs/demo.gif" alt="Demo" width="720" />
-</p>
--->
+When the agent needs something specific from your history (a past decision, a quote from a call, what you've actually shipped), it reaches into your Timeln second brain through a hosted MCP server. Every answer cites a source. If memory has nothing, the skill says so plainly — never invents.
 
 ## Quickstart
 
-Give your agent a second brain: [Claude Code](#claude-code), [Codex CLI](#codex-cli), [Codex App](#codex-app), [Cursor](#cursor), [Gemini CLI](#gemini-cli), [OpenCode](#opencode), [GitHub Copilot CLI](#github-copilot-cli).
-
 ```bash
-npx skills add timelnapp/skills
+npx skills@latest add timelnapp/skills
 ```
 
-> All skills live in [`skills/`](skills/) — compatible with any agent that follows the [skills.sh](https://skills.sh) standard.
+Then connect the hosted MCP — once per agent:
 
-## How It Works
+1. **[timeln.app/signup](https://timeln.app/signup)** — free, Google SSO.
+2. **Settings → API Tokens → Create**. Copy the `tln_...` token.
+3. Add to your agent's MCP config (`~/.claude.json`, `~/.cursor/mcp.json`, etc.):
 
-It starts from the moment you need your AI to know something real — something from *your* history, not its training data.
+   ```json
+   {
+     "mcpServers": {
+       "timeln": {
+         "url": "https://timeln-mcp-production.up.railway.app/mcp",
+         "headers": { "Authorization": "Bearer tln_YOUR_TOKEN_HERE" }
+       }
+     }
+   }
+   ```
 
-Instead of hallucinating a plausible answer, the agent reaches into your Timeln memory through a hosted MCP server. It pulls real documents, real knowledge-graph nodes, real decisions you recorded. Every answer comes with a citation. If the memory doesn't have it, the skill says so plainly — no fabrication, no filler.
-
-There are six skills, each built for a specific moment:
-
-1. **Exploring a topic** — `timeln-find` searches your memory, applies MECE gap analysis and the PARA framework, and returns sharp, actionable insight. Optionally renders an interactive D3 knowledge graph.
-
-2. **Planning your week** — `timeln-plan` takes your recent saves and runs them through a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX). Output is a single HTML pipeline artifact with every filtering decision visible.
-
-3. **Recalling a fact mid-call** — `timeln-quickly` is the hotkey. One sentence or one verbatim quote, one citation, under a second. No synthesis, no paragraphs.
-
-4. **Proving you've shipped** — `timeln-shipped` surfaces actually-delivered work with artifact pointers (repo URL, doc title, demo link) ready to paste mid-pitch. Distinguishes shipped projects from saved articles.
-
-5. **Recalling a past decision** — `timeln-decided` pulls the actual decision, the stated rationale, and the rejected alternatives from your saved ADRs and design docs. Stops your agent from relitigating settled calls with generic tradeoff lectures.
-
-6. **Checking your scars** — `timeln-warned` surfaces your own past failures, retros, and post-mortems before you commit to an approach. Your actual history, not "common pitfalls."
-
-Because the skills trigger on natural phrases, you don't need to do anything special. Say "quickly: what timeline did we agree on?" mid-call, or "have I built this before?" in a pitch, and the right skill fires automatically.
-
----
-
-## Installation
-
-Installation differs by agent. If you use more than one, install Timeln Skills separately for each.
-
-**Every agent** needs the hosted Timeln MCP server — see [Connect the MCP Server](#connect-the-mcp-server) after installing.
-
-### Claude Code
-
-Install the plugin from the marketplace:
-
-```bash
-/plugin install timeln-skills@timeln-skills
-```
-
-Or install manually:
-
-```bash
-npx skills add timelnapp/skills
-```
-
-Skills are auto-discovered from `~/.claude/skills/`.
-
-### Codex CLI
-
-Open the plugin search interface:
-
-```bash
-/plugins
-```
-
-Search for `timeln-skills` and select **Install Plugin**.
-
-### Codex App
-
-In the Codex app, click **Plugins** in the sidebar. Find **Timeln Skills** in the Productivity section and click **+**.
-
-### Cursor
-
-```bash
-npx skills add timelnapp/skills
-```
-
-Skills are auto-discovered from `~/.cursor/skills/` (or `.cursor/skills/` inside a project).
-
-Or install via Cursor Agent chat:
-
-```text
-/add-plugin timeln-skills
-```
-
-### Gemini CLI
-
-Install the extension:
-
-```bash
-gemini extensions install https://github.com/Timelnapp/skills
-```
-
-Update later:
-
-```bash
-gemini extensions update timeln-skills
-```
-
-### OpenCode
-
-Tell OpenCode:
-
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/Timelnapp/skills/main/.opencode/INSTALL.md
-```
-
-Detailed docs: [.opencode/INSTALL.md](.opencode/INSTALL.md)
-
-### GitHub Copilot CLI
-
-Copilot CLI auto-detects Timeln Skills via the session-start hook when `COPILOT_CLI` is set. Install manually:
-
-```bash
-npx skills add timelnapp/skills
-```
-
-### Connect the MCP Server
-
-All agents need the hosted Timeln MCP. Add to your agent's MCP config:
-
-- Claude Code: `~/.claude.json`
-- Cursor: `~/.cursor/mcp.json`
-- Others: your agent's MCP configuration file
-
-```json
-{
-  "mcpServers": {
-    "timeln": {
-      "url": "https://timeln-mcp-production.up.railway.app/mcp",
-      "headers": {
-        "Authorization": "Bearer tln_YOUR_TOKEN_HERE"
-      }
-    }
-  }
-}
-```
+4. Restart your agent. `/mcp` should list `timeln`.
 
 No Python, no local daemon — the MCP is hosted.
 
-### Get Your Token
+## Why these skills exist
 
-1. **[timeln.app/signup](https://timeln.app/signup)** — free, Google SSO, no credit card.
-2. **[app.timeln.app](https://app.timeln.app) → Settings → API Tokens → Create**. Copy the `tln_...` token (shown once).
-3. Restart your agent. Type `/mcp` (or equivalent) to confirm `timeln` is listed.
+Two problems, two skill packs.
 
-No Timeln account? Skills load, but tools return a friendly *"sign up at timeln.app"* nudge. One signup and everything lights up.
+### Memory — the agent fabricates instead of recalling
 
----
+Agents asked to "recall" usually pattern-match training data, then dress it up as your history. The fix is a real lookup against your second brain, with hard rules against fabrication: every claim cites a Timeln doc, and "no record" is treated as the correct answer when memory is empty.
 
-## What's Inside
+That's **[thinking-os](./skills/thinking-os/)**: six recall skills that each own a specific moment (mid-call, mid-pitch, Monday planning) and one output shape. Plus a local TTS engine to narrate what you find.
 
-### Recall (rigid skills — follow the output shape exactly)
+### Consulting work — the agent skips the gates
 
-| Skill | Trigger phrases | Output | Latency |
-|---|---|---|---|
-| **timeln-quickly** | "quickly: X", "what did they say about X", "remind me -- X" | One sentence + citation | <1s |
-| **timeln-shipped** | "have I built X before?", "case study for X", "proof of X" | Up to 3 hits (project + artifact link) | <2s |
-| **timeln-decided** | "why did I pick X?", "ADR for X", "what was my call on X" | Decision + rationale + rejected alts | <2s |
-| **timeln-warned** | "what bit me on X?", "gotchas with X", "any retros on X" | Up to 3 past failures + links | <2s |
+Pursuing engagements is a multi-stage process with mandatory human checkpoints. Off-the-shelf agents skip the gates: they jump from a transcript straight to a "proposal" without a frame, without integrity checks, without a red-team pass.
 
-### Synthesis (flexible skills — adapt depth to the question)
+That's **[consulting-os](./skills/consulting-os/)**: a solo-founder pursuit pipeline (capture → frame → design → architect → build → review → ship → pursue) with checkpoints at every stage. Memory skills from thinking-os run at every stage — no duplicate memory layer.
 
-| Skill | Trigger phrases | Output | Latency |
-|---|---|---|---|
-| **timeln-find** | "search my memory", "connect my ideas", "based on my past data..." | Synthesis + MECE/PARA gaps + optional D3 graph | ~3-5s |
-| **timeln-plan** | "plan my saves", "what should I do this week?", "cascade my last 30 days" | 6-stage HTML pipeline (PARA → RICE → Eisenhower → GTD → 4DX) | ~5-10s |
+## Reference
 
-Every skill has hard rules against fabrication. If memory doesn't have it, the skill says so — never invents.
+### thinking-os
 
----
+Memory & recall, grounded in Timeln MCP.
 
-## Which Skill for Which Moment?
+- **[timeln-find](./skills/thinking-os/timeln-find/SKILL.md)** — Open-ended search and synthesis over your memory. MECE gap analysis, PARA framework, optional D3 knowledge graph.
+- **[timeln-plan](./skills/thinking-os/timeln-plan/SKILL.md)** — Convert recent saves into a ranked action plan via a 6-framework cascade (PARA → MECE → RICE → Eisenhower → GTD → 4DX). HTML pipeline output.
+- **[timeln-quickly](./skills/thinking-os/timeln-quickly/SKILL.md)** — One-breath mid-call recall. One sentence or one verbatim quote, one citation, under a second.
+- **[timeln-shipped](./skills/thinking-os/timeln-shipped/SKILL.md)** — Proof of actually-shipped work with artifact pointers ready to paste mid-pitch.
+- **[timeln-decided](./skills/thinking-os/timeln-decided/SKILL.md)** — Past decisions with stated rationale and rejected alternatives. Stops agents from relitigating settled calls.
+- **[timeln-warned](./skills/thinking-os/timeln-warned/SKILL.md)** — Past failures, retros, post-mortems. Your actual scars, not "common pitfalls."
+- **[timeln-podcast](./skills/thinking-os/timeln-podcast/SKILL.md)** — Generate podcast-quality narration from any text using local Kokoro TTS. Runs entirely offline.
 
-| Moment | Use this |
-|---|---|
-| Mid-call, client asks "what timeline did we agree on?" | `timeln-quickly` |
-| Client says "have you done this before?" | `timeln-shipped` |
-| Pre-architecture chat: "should we use X?" | `timeln-warned` + `timeln-decided` |
-| Monday morning: what should I focus on this week? | `timeln-plan` or `timeln-find` |
-| Exploring a topic, learning from past work | `timeln-find` |
-| Proving you've shipped work in a proposal | `timeln-shipped` |
-| Relitigating a settled decision | `timeln-decided` |
-| About to recommend something, want to sanity-check | `timeln-warned` |
+### consulting-os
 
----
+Solo-founder consulting pursuit pipeline, with human-in-the-loop gates.
 
-## MCP Tools
+- **[consult-pipeline](./skills/consulting-os/consult-pipeline/SKILL.md)** — Orchestrates the full workflow (CAPTURE → SUMMARY) with mandatory checkpoints. Owns the prospect template and engagement passport schema.
+- **[consult-frame](./skills/consulting-os/consult-frame/SKILL.md)** — Brief or transcript → structured engagement frame: decision, definition of good, scope, stakeholders.
+- **[consult-arc](./skills/consulting-os/consult-arc/SKILL.md)** — Solution arc (3-option spread). Owns the framework-variants rubric used by build + red-team.
+- **[consult-gates](./skills/consulting-os/consult-gates/SKILL.md)** — Phasing and stage gates with exit criteria.
+- **[consult-acceptance](./skills/consulting-os/consult-acceptance/SKILL.md)** — Acceptance matrix with fallback rows fed by `timeln-warned`.
+- **[consult-commercial](./skills/consulting-os/consult-commercial/SKILL.md)** — Commercial section: duration, team shape, fees, access assumptions.
+- **[consult-package](./skills/consulting-os/consult-package/SKILL.md)** — Assemble the client-ready proposal pack.
+- **[consult-integrity](./skills/consulting-os/consult-integrity/SKILL.md)** — Gate 3.5 / 5.5 integrity check: citations, proof, scope lock, option drift, fabrication.
+- **[consult-consistency-lint](./skills/consulting-os/consult-consistency-lint/SKILL.md)** — Cross-artifact lint (frame ↔ arc ↔ acceptance ↔ commercial).
+- **[consult-red-team](./skills/consulting-os/consult-red-team/SKILL.md)** — Multi-perspective stress test (exec, procurement, technical skeptic, devil's advocate).
+- **[consult-pursue](./skills/consulting-os/consult-pursue/SKILL.md)** — Post-pack pursuit: cover email + call script. Cold-start mode synthesises a pack from client + topic alone.
 
-| Tool | Purpose |
-|---|---|
-| `whoami` | Confirm token, return email + plan. |
-| `get_recent_docs(window)` | Docs from the last "weekly" or "monthly" window. |
-| `search_documents(limit, offset)` | Paginated list of all your documents. |
-| `get_document(doc_id)` | Single document by id. |
-| `query_knowledge(question)` | Natural-language query over your KG + docs. |
-| `get_topic_entities(topic)` | Entities + sources connected to a topic. |
-| `ingest_text(text, title?)` | Add plain text to your Timeln library. |
-| `ingest_url(url, title?)` | Add a public URL. |
+Slash commands: `/cos-plan`, `/cos-research`, `/cos-frame`, `/cos-design`, `/cos-integrity`, `/cos-architect`, `/cos-variants`, `/cos-lint`, `/cos-ship`, `/cos-pursue`, `/cos-resume` — defined in [`.claude-plugin/commands/`](.claude-plugin/commands/).
 
-All tools forward the bearer token from the `Authorization` header.
+## Installation per agent
 
----
+`npx skills@latest add timelnapp/skills` works for Claude Code, Cursor, Codex CLI, OpenCode, and GitHub Copilot CLI. Skills are auto-discovered from each agent's skills directory.
 
-## Philosophy
+- **Claude Code**: `/plugin install timeln-skills@timeln-skills`
+- **Cursor**: `/add-plugin timeln-skills` in agent chat
+- **Gemini CLI**: `gemini extensions install https://github.com/Timelnapp/skills`
+- **Codex App**: Plugins sidebar → Productivity → Timeln Skills → +
+- **OpenCode**: see [.opencode/INSTALL.md](.opencode/INSTALL.md)
 
-- **Real data over training data** — every answer must cite a source from the user's memory. If there's nothing, say so.
-- **One job per skill** — each skill has a single purpose, a single output shape, and hard rules. No Swiss-army-knife skills.
-- **Moments over features** — skills are designed around real moments (mid-call, mid-pitch, Monday planning) not abstract capabilities.
-- **Anti-hallucination as identity** — fabrication isn't a quality issue, it's a trust violation. Every skill treats "no record" as the correct answer when memory is empty.
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a branch for your work
-3. Follow the skill template (YAML frontmatter → When to use → Workflow → Output shape → Common failure modes → Rules)
-4. Each skill must include an anti-rationalization table — list specific ways an agent might cut corners, with rebuttals
-5. Submit a PR
-
-See any `SKILL.md` file in `skills/` for the template.
-
----
+If you use more than one agent, install separately for each.
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
----
-
-## Community
-
-- **Issues**: https://github.com/Timelnapp/skills/issues
-- **Timeln**: [timeln.app](https://timeln.app) — sign up free, start saving
