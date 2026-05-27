@@ -4,7 +4,7 @@
 
 # Skills For Genuine Doers
 
-My second-brain skills that I use every day to do real work - not just vibeing.
+My second-brain skills that I use every day to do real work - not just vibing.
 
 Context switching is hard, especially when you're a solopreneur juggling projects and clients. Approaches like MECE, TODOs, PARA, GTD and OKRs try to help you organise your thoughts. But while doing so, they take away the freedom to be creative and authentic.
 
