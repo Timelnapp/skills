@@ -6,7 +6,7 @@ Skills live in `.agents/skills/`. Cursor loads them from the workspace automatic
 
 ### Consult skills (local)
 
-- `consult-pipeline`, `consult-frame`, `consult-arc`, `consult-gates`, `consult-acceptance`, `consult-commercial`, `consult-package`, `consult-consistency-lint`, `consult-integrity`, `consult-red-team`, `consult-pursue`
+- `consult-pipeline`, `consult-frame`, `consult-arc`, `consult-gates`, `consult-acceptance`, `consult-commercial`, `consult-package`, `consult-consistency-lint`, `consult-integrity`, `consult-red-team`, `consult-pursue`, `consult-market`
 
 ### Timeln skills (GitHub — already in repo)
 
@@ -36,6 +36,10 @@ Locked in `skills-lock.json` from `timelnapp/skills`.
 4. Restart Cursor. Verify: *"Call whoami on Timeln MCP."*
 
 If MCP is down, pipeline continues with source docs only — Timeln sections marked `skipped`.
+
+### Optional connectors (for `/cos-market`)
+
+Connect **Apollo** or **Clay** for verified firmographics + contacts in the post-win lookalike search. If absent, `/cos-market` falls back to web/Exa and marks contacts `not verified — enrich` — never guessed.
 
 ## 3. New pursuit
 
@@ -81,6 +85,7 @@ When a transcript arrives, run `/cos-research` and replace the `(synthesized)` p
 | `/cos-lint` | 5.5 |
 | `/cos-ship` | 6 |
 | `/cos-pursue` | 7 — standard (pack) or **cold-start** (client + topic) |
+| `/cos-market` | post-win — top-5 lookalike target list |
 | `/cos-resume` | any |
 
 ## 5. Weekly solo ops

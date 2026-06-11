@@ -18,9 +18,9 @@ Six skills grounded in the user's Timeln second brain via hosted MCP, plus a loc
 
 ### `skills/consulting-os/` — pursuit pipeline
 
-Eleven skills for solo-founder consulting work, orchestrated by `consult-pipeline` with mandatory human checkpoints at every stage. Memory skills from `thinking-os` run at every stage — no duplicate memory layer.
+Skills for solo-founder consulting work, orchestrated by `consult-pipeline` with mandatory human checkpoints at every stage. Memory skills from `thinking-os` run at every stage — no duplicate memory layer. Plus `consult-market` — a standalone post-win skill that finds the next 5 lookalike accounts for a won use case.
 
-Slash commands at `.claude-plugin/commands/cos-*.md`: `/cos-plan`, `/cos-pursue`, `/cos-resume`, and one per pipeline stage.
+Slash commands at `.claude-plugin/commands/cos-*.md`: `/cos-plan`, `/cos-pursue`, `/cos-market`, `/cos-resume`, and one per pipeline stage. Setup steps in `skills/consulting-os/docs/SETUP.md`.
 
 ## Key rules
 

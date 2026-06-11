@@ -14,8 +14,9 @@ Thin wrappers for **`consult-pipeline`** stages. Each command lists Timeln prefe
 | [/cos-lint](cos-lint.md) | 5.5 REVIEW | warned |
 | [/cos-ship](cos-ship.md) | 6 PACKAGE | quickly (optional) |
 | [/cos-pursue](cos-pursue.md) | 7 PURSUE | shipped, quickly — **cold-start** if client+topic only |
+| [/cos-market](cos-market.md) | post-win | find — top-5 lookalike target list |
 | [/cos-resume](cos-resume.md) | any | per stage table |
 
-Natural language: *"build a proposal for X"* → `/cos-plan`
+Natural language: *"build a proposal for X"* → `/cos-plan` · *"who else would buy this?"* → `/cos-market`
 
 Weekly: **`timeln-plan`** (not a cos command — solo ops cron)

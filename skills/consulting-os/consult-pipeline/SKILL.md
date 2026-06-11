@@ -199,6 +199,8 @@ Write `10-process-summary.md`: stages completed, revision loops, Timeln pulls us
 
 Optional **`timeln-plan`** to reprioritize next pursuits.
 
+**Post-win expansion (not a pipeline stage):** once a deal is won, run **`/cos-market`** (`consult-market`) to find the next 5 lookalike accounts in the same industry + size for the same use case. Standalone, manual-seed — does not read the passport.
+
 ## Output — process summary shape
 
 ```
@@ -245,3 +247,4 @@ Optional **`timeln-plan`** to reprioritize next pursuits.
 | timeln-shipped | Arc, commercial, integrity, build, pursue |
 | timeln-warned | Arc, acceptance, architect, review |
 | timeln-quickly | Frame, integrity, package, pursue, deliver |
+| consult-market | Post-win: top-5 lookalike target list (standalone) |
