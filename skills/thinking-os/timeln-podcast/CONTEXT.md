@@ -1,12 +1,12 @@
 # Timeln Podcast
 
-A published agent skill that turns a window of Timeln saves into one spoken podcast episode called **Timeln Podcast**. The skill owns narration logic and TTS tooling; the user owns where (if anywhere) files land on disk.
+A published agent skill that turns a window of Timeln saves into one **educational deep-dive** podcast called **Timeln Podcast**. Saves are source material (like papers for NotebookLM); the episode teaches the topics so the listener learns something. The skill owns curriculum logic and TTS tooling; the user owns where (if anywhere) files land on disk.
 
 ## Language
 
 **Timeln Podcast**:
-The public name for what this skill produces — one narrated episode from the user's saves. Used in cold opens and docs.
-_Avoid_: Monday Morning Lookup, Brain FM, second brain radio (personal/show brands).
+The public name for what this skill produces — one educational deep-dive episode sourced from the user's saves. Teaches topics; does not narrate what was saved. Used in cold opens and docs.
+_Avoid_: Monday Morning Lookup, Brain FM, second brain radio (personal/show brands), save tour, weekly recap.
 
 **Episode**:
 The single audio deliverable produced by one run of the skill (typically one MP3).
@@ -28,9 +28,9 @@ _Avoid_: Note, bookmark, clip (too generic).
 How far back to pull saves. Defaults to seven days (`weekly` on the MCP). User may override (e.g. `monthly`, or a custom range if they state it).
 _Avoid_: Monday, this week (ambiguous without dates).
 
-**Show file**:
-The intermediate markdown that connects saves (graph, through-line, segments). Working material, not the TTS input. The agent may save it wherever the active workspace implies; the skill does not prescribe a path.
-_Avoid_: Script, podcast doc (ambiguous with TTS script).
+**Curriculum file** (show file):
+The intermediate lesson plan before scripting. Defines 1–3 topic picks, learning objectives, concept ladders, mechanisms to teach, worked examples, and metaphor spine. Working material, not the TTS input. The agent may save it wherever the active workspace implies; the skill does not prescribe a path.
+_Avoid_: Save-connection map, "what you saved" narrative, script (ambiguous with TTS script).
 
 **TTS script**:
 The speakable-only markdown fed to Kokoro. No mermaid, no show bible. Same placement rule as the show file — workspace-implied, not skill-mandated.
@@ -61,7 +61,7 @@ What ships in `timelnapp/skills`: `SKILL.md`, `references/`, and `engine/` (scri
 _Avoid_: Committing venv, prebuilt binaries, platform-specific wheels in git.
 
 **Development source**:
-Canonical skill edits happen in `operations/.agents/skills/thinking-os/timeln-podcast/`. Publishing is a manual PR into `timelnapp/skills` per release — not the other way around.
+Canonical skill edits happen in `operations/.agents/skills/timeln-podcast/`. Publishing is a manual PR into `timelnapp/skills` per release — not the other way around.
 _Avoid_: Treating the registry copy as authoritative, dual maintenance without PR discipline.
 
 **Registry metadata**:
@@ -81,8 +81,8 @@ Turns recent saves into a ranked action plan (PARA / Eisenhower). Use when the u
 _Avoid_: Combining plan output with podcast in one run without user ask.
 
 **Podcast boundary**:
-This skill applies when the user wants an MP3 (listen), and accepts: pull saves → connect (when enough material) → TTS script → local render. Not a shortcut for find with audio bolted on.
-_Avoid_: Single-step "just read my saves aloud" when N ≥ 5.
+This skill applies when the user wants an MP3 (listen) that teaches topics from their saves. Pipeline: pull saves → read full content → build curriculum (when enough material) → educational TTS script → local render. Not a save tour, not a shortcut for find with audio bolted on.
+_Avoid_: "Review what I saved this week", headline summaries without mechanisms, covering every save shallowly.
 
 **Thin week**:
 When fewer than five saves fall in the **Lookup window** (N < 5), the agent skips the **Show file** and goes straight to the **TTS script**. When N ≥ 5, the **Show file** is required. Cold open must acknowledge a thin week when skipping.
@@ -105,5 +105,5 @@ Aligned with CONTEXT: `paths.py`, `render_podcast.sh`, `setup.sh`, `SKILL.md`, `
 
 **User:** Why can't timeln-find do this?
 
-**Agent:** timeln-find is for reading and exploring in text. This skill is for listening: connect your saves, narrate them, and run Kokoro to produce the MP3.
+**Agent:** timeln-find is for reading and exploring in text. This skill is for listening: pick 1–3 topics from your saves, teach them in depth like a NotebookLM deep dive, and render the MP3.
 

@@ -2,8 +2,9 @@
 name: timeln-podcast
 description: >
   Trigger on "weekly podcast", "timeln podcast", "podcast from my saves",
-  "turn my saves into audio", "listen to my saves". Produces one Timeln Podcast
-  MP3 from Timeln saves (default: last 7 days). Full pipeline: pull, connect,
+  "turn my saves into audio", "listen to my saves". Produces one educational
+  deep-dive MP3 from Timeln saves (default: last 7 days) — teaches the topics
+  you captured, not a tour of what you saved. Full pipeline: pull, curriculum,
   TTS script, local render. NOT for text-only search (timeln-find) or action
   plans (timeln-plan).
 compatibility: "Requires a free Timeln account (timeln.app/signup), API token, and hosted Timeln MCP. For MP3 output: Python 3.11, espeak, ffmpeg, and ~500MB disk for the local Kokoro venv on first render (run engine/setup.sh)."
@@ -20,7 +21,12 @@ metadata:
 
 # Timeln Podcast
 
-Turn **Timeln saves** into **one MP3** (Timeln Podcast). User listens; timeln-find is for reading.
+Turn **Timeln saves** into **one educational deep-dive MP3**. Saves are source material —
+like papers fed to NotebookLM. The episode **teaches the topics** so the listener learns
+something they didn't know. It does **not** narrate what was saved or why.
+
+**Outcome test:** After listening, could the user explain the mechanism behind a topic from
+their saves to someone else? If the script only says "you saved X about Y," it failed.
 
 **Deliverable:** `{slug}.mp3` in the shell **working directory** when `render.sh` runs (default slug: `timeln-podcast-{YYYY-MM-DD}`). Report the absolute path in chat.
 
@@ -31,7 +37,7 @@ Turn **Timeln saves** into **one MP3** (Timeln Podcast). User listens; timeln-fi
 ## Setup (once)
 
 ```bash
-cd .agents/skills/thinking-os/timeln-podcast/engine && ./setup.sh
+cd .agents/skills/timeln-podcast/engine && ./setup.sh
 ```
 
 Needs: Python 3.11, espeak, ffmpeg. macOS: `brew install espeak`.
@@ -49,45 +55,72 @@ get_recent_docs(window="weekly")
 
 - Default **lookup window:** 7 days (`weekly`). User may override (`monthly`, or stated range).
 - Filter noise, duplicates, corrupted ingests. Count saves → **N**.
+- Cluster saves by **topic** (not by date saved).
+- For each candidate topic cluster, `get_document` on the richest saves — read full content,
+  not titles. You need mechanisms, stats, and examples to teach from.
 
-Optional: `query_knowledge` / `get_topic_entities` for connections.
+Optional: `query_knowledge` / `get_topic_entities` for depth on concepts.
 
-### 2 — Connect (show file)
+**Topic selection:** Pick **1–3 topics** with enough substance for a 4–6 minute deep dive each.
+Do not try to cover every save. Depth over breadth.
 
-**When N ≥ 5:** write a **show file** wherever the workspace implies (skill does not prescribe a path).
+### 2 — Curriculum (show file)
 
-Include: mermaid show bible, through-line, themed segments with bridges, graph bridge. Real saves only.
+**When N ≥ 5:** write a **curriculum file** (show file) wherever the workspace implies.
 
-**When N < 5 (thin week):** skip show file. Say so in the cold open. Go to step 3.
+This is a **lesson plan**, not a save-connection map. Include:
+
+- **Episode thesis** — the one idea the episode teaches (about the topics, not about saving)
+- **Topic picks** — 1–3 topics selected for deep dive, with rationale
+- Per topic: **learning objective**, **concept ladder** (foundation → mechanism → example → limitation), **key mechanisms to teach**, **worked example** (stat/scenario from save content), **skeptic question**
+- **Metaphor spine** — one image tying topics together
+- **Substantive bridges** — how topics connect as ideas (not "user saved both")
+- Mermaid optional — only if it helps map concepts, not saves
+
+**When N < 5 (thin week):** skip curriculum file. Pick the one richest topic; teach it deeply. Go to step 3.
 
 ### 3 — Script (TTS)
 
 Write **TTS script** (workspace-implied path) as a **two-host NotebookLM-style
-conversation**. Template: `references/tts-script-template.md` — read it before
-drafting.
+conversation**. Template: `references/tts-script-template.md` — **read the full
+file before drafting**, especially the "NotebookLM craft" section (reverse-engineered
+from a reference deep-dive episode).
 
 **Format (non-negotiable):**
 
 - Every spoken line begins with `HOST_A:` or `HOST_B:`.
-- `HOST_A` = curious / reflective. Asks the listener's question, restates ideas in plain English. Voice: `af_heart` (warm female).
-- `HOST_B` = insight-driven. Brings the surprising angle, names the connection. Voice: `am_michael` (warm male).
+- `HOST_A` = curious learner. Asks the questions a student would ask, restates in plain English, pushes back. Voice: `af_heart` (warm female).
+- `HOST_B` = teacher. Explains mechanisms, walks through examples, names the insight. Voice: `am_michael` (warm male).
 - Section headers stay as `## [COLD OPEN]`, `## [SEGMENT 1 — …]`, `## [THE BIG PICTURE]`, `## [OUTRO]`. The extractor only renders content after the cold open.
 - No mermaid, no show bible, no production notes in this file.
 
-**Writing rules — apply every one of these:**
+**NotebookLM craft — the patterns that make it sound real:**
 
-1. **One idea per turn.** A turn is 1–2 sentences, occasionally 3. Never a paragraph. If a save has two stats, split them across turns.
-2. **React, don't narrate.** Drop in short reaction beats often — "Yeah." "Wait, really?" "Hmm." "Okay, say more." "That's wild." At least one reaction beat per minute of dialogue.
-3. **Analogies for every abstract claim.** Listeners can't see the words. After any abstract concept, the next turn says "it's basically like…" with a concrete image (relay race, flywheel, recipe, thermostat).
-4. **Ask the listener's question.** When something jargon-y appears, HOST_A asks the question the listener is already thinking. HOST_B answers in plain English.
-5. **No "Chapter one / Segment two."** Transitions are conversational ("Okay so this connects to something else you saved this week…").
-6. **Numbers spelled long-form.** "Eighty thousand dollars" not "$80k". "Ten to twenty-five percent" not "10–25%". "Five times" not "5x".
-7. **Name tension when saves disagree.** Each host takes one side for a beat, then they resolve it or acknowledge it's open.
-8. **"Your saves," "your week."** Listener is the saver. Second person. Never "the user."
-9. **Cold open hooks — does not recap.** Open with the most surprising or contradictory observation from the week. Save count, if mentioned at all, goes in passing later.
-10. **Outro lands on one thing.** One takeaway, phrased as a question or a single specific action. No action-item lists in audio.
+1. **Metaphor spine.** One central image from the through-line; return to it at transitions and in the outro (full circle).
+2. **Progressive disclosure.** Relatable hook → stakes → foundation → problem → insight → open edge. Never dump the conclusion first.
+3. **Micro-turns.** 2–4 seconds per cue. One clause per turn. Split comma splices and double-idea turns.
+4. **Reaction beats.** Standalone turns: "Yeah." "Okay." "Wait, really?" "That's wild." At least one every 30–45 seconds.
+5. **Jargon: name → react → explain.** HOST_B names it; HOST_A reacts to the *name*; HOST_B explains; HOST_A restates simpler.
+6. **Numbers as dialogue.** Walk stats through interactively ("Which sounds like an A." → "Until you compound it."). Spell long-form.
+7. **Skeptic loops.** HOST_A pushes back before accepting a big claim ("Wait, let me push back…" / "Why isn't everyone doing this?"). One per major segment.
+8. **Analogies on every abstract claim.** "It's basically like…" / "To put that into perspective…" Listeners can't see the words.
+9. **Conversational transitions.** "Which brings us to…" / "But that brings us to the next big question." Never "Chapter one" / "Segment two."
+10. **Outro: summarize → callback → lingering question.** Not an action-item list. End on an open frontier the listener will notice next week.
 
-**Target length:** ~10–14 minutes of dialogue (the back-and-forth eats more time than monologue, so segments can be tighter — aim for fewer, sharper turns rather than more turns).
+**Educational depth (non-negotiable):**
+
+- **Teach the topic, not the save.** The episode is about on-policy distillation, world models,
+  agent harnesses — not "what you bookmarked this week."
+- **Banned in spoken lines:** "you saved", "your saves", "you bookmarked", "what your saves
+  are telling", "that's why you saved this", save counts as narrative frame.
+- **Provenance at most once:** optional single line in cold open ("something you captured
+  recently on X"), then teach. Never mention saves again.
+- **Per segment:** foundation → mechanism → worked example → limitation. Pull from `get_document`
+  content — mechanisms, stats, named concepts, failure modes.
+- **1–3 topics, 4–6 min each.** Do not tour every save. Pick clusters with enough substance.
+- **Name tension when ideas disagree.** Each host takes one side on the *concept*, then resolve.
+
+**Target length:** 12–18 minutes. Educational depth needs more time than a save tour.
 
 **TTS hygiene:** pronunciation overrides live in `engine/tts_normalize.py`.
 
@@ -105,7 +138,7 @@ Look at the printed output: every section should have a healthy mix of HOST_A an
 From skill root, with CWD = where the MP3 should land:
 
 ```bash
-cd .agents/skills/thinking-os/timeln-podcast
+cd .agents/skills/timeln-podcast
 ./render.sh /path/to/script.md timeln-podcast-2026-05-26
 ```
 
@@ -124,22 +157,28 @@ Defaults: HOST_A → `af_heart`, HOST_B → `am_michael`, speed `0.96`. Override
 | Voice A (HOST_A) | `af_heart` (warm female, curious/reflective) |
 | Voice B (HOST_B) | `am_michael` (warm male, insight-driven) |
 | Speed | `0.96` |
-| Format | Two-host conversational (NotebookLM-style) |
-| Thin week | N < 5 → skip show file, keep two-host format |
+| Format | Two-host educational deep dive (NotebookLM-style) |
+| Topics per episode | 1–3 (depth over breadth) |
+| Thin week | N < 5 → skip curriculum file, one deep topic |
 
 ---
 
 ## Do not
 
-- Fabricate saves
-- Skip connect when N ≥ 5
+- Fabricate saves or source content
+- Skip curriculum when N ≥ 5
 - Route text-only questions here (use timeln-find)
 - Store MP3 inside the skill package
-- Write monologue prose without `HOST_A:` / `HOST_B:` tags (the extractor will still render it, but in a single voice — defeats the format)
-- Write paragraph-length turns. One idea per turn.
+- **Narrate saves** — "you saved X", "your week of saves", "what you captured" (meta-commentary)
+- **Headline-summary only** — must teach mechanisms from full `get_document` content
+- **Tour every save** — pick 1–3 topics and go deep; breadth kills learning
+- Write monologue prose without `HOST_A:` / `HOST_B:` tags
+- Write paragraph-length turns — split to micro-turns (one clause each)
 - Use "Chapter one" / "Segment two" lecture transitions
-- Recap save count in the cold open — open with the surprising observation
-- List action items in the outro — land on one thing
+- Open with save count or save inventory — open with the topic's universal hook
+- List action items in the outro — land on learning callback + frontier question
+- Dump stats in one turn — walk numbers through dialogue
+- Skip skeptic loops — pushback before big claims is what builds trust
 
 ---
 

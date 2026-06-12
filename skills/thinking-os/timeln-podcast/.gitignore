@@ -1,6 +1,1 @@
-# Created locally by engine/setup.sh (~500MB); never commit
 engine/.venv/
-
-# Ephemeral render workspace (paths.build_workspace uses /tmp; ignore if copied here)
-workspace/
-*.mp3
